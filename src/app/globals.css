@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-background: #09090b;
+  --color-foreground: #fafafa;
+  --color-card: #09090b;
+  --color-card-foreground: #fafafa;
+  --color-popover: #09090b;
+  --color-popover-foreground: #fafafa;
+  --color-primary: #fafafa;
+  --color-primary-foreground: #18181b;
+  --color-secondary: #27272a;
+  --color-secondary-foreground: #fafafa;
+  --color-muted: #27272a;
+  --color-muted-foreground: #a1a1aa;
+  --color-accent: #27272a;
+  --color-accent-foreground: #fafafa;
+  --color-destructive: #7f1d1d;
+  --color-destructive-foreground: #fafafa;
+  --color-border: #27272a;
+  --color-input: #27272a;
+  --color-ring: #d4d4d8;
+
+  /* Status colors */
+  --color-status-keep: #22c55e;
+  --color-status-discard: #71717a;
+  --color-status-crash: #ef4444;
+
+  /* Metric direction */
+  --color-metric-better: #22c55e;
+  --color-metric-worse: #ef4444;
+
+  /* Domain badge colors */
+  --color-domain-llm-training: #3b82f6;
+  --color-domain-llm-inference: #8b5cf6;
+  --color-domain-robotics: #f97316;
+  --color-domain-trading: #eab308;
+  --color-domain-computer-vision: #06b6d4;
+  --color-domain-reinforcement-learning: #ec4899;
+  --color-domain-audio-speech: #14b8a6;
+  --color-domain-drug-discovery: #84cc16;
+  --color-domain-climate-weather: #22d3ee;
+  --color-domain-math-theorem-proving: #a78bfa;
+  --color-domain-other: #71717a;
+
+  --radius: 0.5rem;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
