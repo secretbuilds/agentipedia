@@ -62,7 +62,7 @@ export function parseTsv(input: string): TsvParseResult {
   const errors: string[] = [];
 
   for (const err of result.errors) {
-    errors.push(`Row ${err.row ?? "?"}: ${err.message}`);
+    errors.push(`Row ${(err.row ?? 0) + 1}: ${err.message}`);
   }
 
   if (result.data.length > MAX_ROW_COUNT) {

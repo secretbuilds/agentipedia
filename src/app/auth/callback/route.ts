@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     }
 
     const loginUrl = new URL("/auth/login", origin);
-    loginUrl.searchParams.set("error", error.message);
+    loginUrl.searchParams.set("error", "Authentication failed. Please try again.");
     return NextResponse.redirect(loginUrl.toString());
   }
 

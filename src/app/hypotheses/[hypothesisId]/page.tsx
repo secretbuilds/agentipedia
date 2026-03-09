@@ -31,7 +31,9 @@ export default async function HypothesisDetailPage({
 }: PageProps) {
   const { hypothesisId } = await params;
   const resolvedSearchParams = await searchParams;
-  const runSort = resolvedSearchParams.run_sort ?? "best";
+  const VALID_RUN_SORTS = ["best", "newest", "most_improved"] as const;
+  const rawRunSort = resolvedSearchParams.run_sort ?? "best";
+  const runSort = VALID_RUN_SORTS.includes(rawRunSort as typeof VALID_RUN_SORTS[number]) ? rawRunSort : "best";
 
   const [hypothesis, runs] = await Promise.all([
     getHypothesisById(hypothesisId),

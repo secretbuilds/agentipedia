@@ -1,15 +1,12 @@
 import { describe, it, expect } from "vitest";
-import {
-  hypothesisSchema,
-  DOMAINS,
-  METRIC_DIRECTIONS,
-} from "@/lib/validators/hypothesis-schema";
+import { hypothesisSchema } from "@/lib/validators/hypothesis-schema";
+import { DOMAINS, METRIC_DIRECTIONS } from "@/lib/utils/constants";
 
 function validInput() {
   return {
     title: "Can a 50M param model break 0.96 val_bpb?",
     description: "Explore architecture modifications to push past the 0.96 baseline on FineWeb.",
-    domain: "LLM Training" as const,
+    domain: "llm_training",
     dataset_url: "https://huggingface.co/datasets/fineweb",
     dataset_name: "FineWeb-Edu 10B tokens",
     metric_name: "val_bpb",
@@ -32,7 +29,7 @@ describe("hypothesisSchema", () => {
     const result = hypothesisSchema.safeParse({
       title: "A valid title that is long enough",
       description: "This is a long enough description for the schema.",
-      domain: "Trading",
+      domain: "trading",
       dataset_url: "https://example.com/data",
       dataset_name: "My dataset",
       metric_name: "sharpe_ratio",
@@ -101,7 +98,7 @@ describe("hypothesisSchema", () => {
   });
 
   describe("domain", () => {
-    it.each(DOMAINS)("accepts domain '%s'", (domain) => {
+    it.each(DOMAINS.map((d) => d.value))("accepts domain '%s'", (domain) => {
       const result = hypothesisSchema.safeParse({
         ...validInput(),
         domain,

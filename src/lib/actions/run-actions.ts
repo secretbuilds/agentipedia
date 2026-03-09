@@ -34,6 +34,13 @@ function getFileExtension(filename: string): string {
   return filename.slice(dotIdx).toLowerCase();
 }
 
+function sanitizeFilename(name: string): string {
+  const base = name.split(/[\\/]/).pop() ?? "code";
+  return base.replace(/[^\w.\-]/g, "_");
+}
+
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 const BATCH_SIZE = 1_000;
 
 // ---------------------------------------------------------------------------
@@ -102,9 +109,15 @@ export async function submitRun(
       return { success: false, error: "results.tsv exceeds maximum size of 5 MB" };
     }
 
-    const tsvText = await tsvFile.text();
+    const tsvBuffer = await tsvFile.arrayBuffer();
+    const tsvText = new TextDecoder().decode(tsvBuffer);
 
-    // 5. Get hypothesis to know metric_direction
+    // 5. Validate hypothesisId as UUID
+    if (!UUID_REGEX.test(hypothesisId)) {
+      return { success: false, error: "Invalid hypothesis ID" };
+    }
+
+    // 6. Get hypothesis to know metric_direction
     const { data: hypothesis, error: hypoError } = await supabase
       .from("hypotheses")
       .select("metric_direction")
@@ -147,7 +160,7 @@ export async function submitRun(
     const tsvPath = `run-files/${hypothesisId}/${runId}/results.tsv`;
     const { error: tsvUploadError } = await admin.storage
       .from("run-files")
-      .upload(tsvPath, new Uint8Array(await tsvFile.arrayBuffer()), {
+      .upload(tsvPath, new Uint8Array(tsvBuffer), {
         contentType: "text/tab-separated-values",
         upsert: false,
       });
@@ -159,7 +172,8 @@ export async function submitRun(
     storagePaths.push(tsvPath);
 
     // 9. Upload code file to Storage
-    const codePath = `run-files/${hypothesisId}/${runId}/${codeFile.name}`;
+    const safeCodeFilename = sanitizeFilename(codeFile.name);
+    const codePath = `run-files/${hypothesisId}/${runId}/${safeCodeFilename}`;
     const { error: codeUploadError } = await admin.storage
       .from("run-files")
       .upload(codePath, new Uint8Array(codeBuffer), {
@@ -208,7 +222,7 @@ export async function submitRun(
         improvement_pct: stats.improvementPct ?? 0,
         results_tsv_url: tsvUrlData.publicUrl,
         code_file_url: codeUrlData.publicUrl,
-        code_filename: codeFile.name,
+        code_filename: safeCodeFilename,
       });
 
     if (runInsertError) {
@@ -238,7 +252,7 @@ export async function submitRun(
       if (batchError) {
         console.error(`Experiment batch insert error (batch ${i / BATCH_SIZE + 1}):`, batchError);
         // Clean up: delete the run (cascade should delete experiments) and storage
-        await supabase.from("runs").delete().eq("id", runId);
+        await admin.from("runs").delete().eq("id", runId);
         await admin.storage.from("run-files").remove(storagePaths);
         return { success: false, error: "Failed to save experiment data" };
       }

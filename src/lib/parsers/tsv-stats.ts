@@ -1,5 +1,5 @@
 import type { ParsedTsvRow } from "./tsv-validator";
-import type { MetricDirection } from "@/lib/validators/hypothesis-schema";
+import type { MetricDirection } from "@/lib/utils/constants";
 
 export interface TsvStats {
   readonly baselineMetric: number | null;

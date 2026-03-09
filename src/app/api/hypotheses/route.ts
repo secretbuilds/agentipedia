@@ -7,7 +7,9 @@ export async function GET(request: NextRequest) {
 
   const domain = searchParams.get("domain") || undefined;
   const status = searchParams.get("status") || undefined;
-  const sort = (searchParams.get("sort") || "newest") as HypothesisSortOption;
+  const VALID_SORTS = ["newest", "most_runs", "best_result"] as const;
+  const rawSort = searchParams.get("sort") || "newest";
+  const sort = (VALID_SORTS.includes(rawSort as typeof VALID_SORTS[number]) ? rawSort : "newest") as HypothesisSortOption;
   const cursor = searchParams.get("cursor") || undefined;
 
   const result = await getHypotheses({ domain, status, sort, cursor });

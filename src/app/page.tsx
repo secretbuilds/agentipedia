@@ -22,7 +22,9 @@ export default async function Home({ searchParams }: PageProps) {
   const params = await searchParams;
   const domain = params.domain || undefined;
   const status = params.status || undefined;
-  const sort = (params.sort || "newest") as HypothesisSortOption;
+  const VALID_SORTS = ["newest", "most_runs", "best_result"] as const;
+  const rawSort = params.sort || "newest";
+  const sort = (VALID_SORTS.includes(rawSort as typeof VALID_SORTS[number]) ? rawSort : "newest") as HypothesisSortOption;
   const cursor = params.cursor || undefined;
 
   const result = await getHypotheses({ domain, status, sort, cursor });
@@ -48,6 +50,7 @@ export default async function Home({ searchParams }: PageProps) {
         }
       >
         <HypothesisFeed
+          key={`${domain}-${status}-${sort}`}
           initialItems={[...result.items]}
           initialNextCursor={result.next_cursor}
           initialHasMore={result.has_more}

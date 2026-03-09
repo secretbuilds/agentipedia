@@ -105,6 +105,15 @@ export function SubmitRunForm({
           });
         }
       };
+      reader.onerror = () => {
+        setTsvState({
+          stats: null,
+          rows: [],
+          errors: ["Failed to read TSV file"],
+          metricColumnName: "",
+          file: null,
+        });
+      };
       reader.readAsText(file);
     },
     [metricDirection],

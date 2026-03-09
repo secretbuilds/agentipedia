@@ -1,31 +1,7 @@
 import { z } from "zod";
+import { DOMAINS, METRIC_DIRECTIONS } from "@/lib/utils/constants";
 
-/**
- * Curated domain list for hypotheses.
- * Kept here so both schema and UI can reference the same source of truth.
- */
-export const DOMAINS = [
-  "LLM Training",
-  "LLM Inference",
-  "Robotics",
-  "Trading",
-  "Computer Vision",
-  "Reinforcement Learning",
-  "Audio / Speech",
-  "Drug Discovery",
-  "Climate / Weather",
-  "Math / Theorem Proving",
-  "Other",
-] as const;
-
-export type Domain = (typeof DOMAINS)[number];
-
-export const METRIC_DIRECTIONS = [
-  "lower_is_better",
-  "higher_is_better",
-] as const;
-
-export type MetricDirection = (typeof METRIC_DIRECTIONS)[number];
+const domainValues = DOMAINS.map((d) => d.value) as [string, ...string[]];
 
 export const hypothesisSchema = z.object({
   title: z
@@ -38,7 +14,7 @@ export const hypothesisSchema = z.object({
     .min(20, "Description must be at least 20 characters")
     .max(10_000, "Description must be at most 10,000 characters"),
 
-  domain: z.enum(DOMAINS),
+  domain: z.enum(domainValues),
 
   dataset_url: z
     .string()
@@ -54,7 +30,7 @@ export const hypothesisSchema = z.object({
     .min(1, "Metric name is required")
     .max(100, "Metric name must be at most 100 characters"),
 
-  metric_direction: z.enum(METRIC_DIRECTIONS),
+  metric_direction: z.enum(METRIC_DIRECTIONS as unknown as readonly [string, ...string[]]),
 
   baseline_to_beat: z
     .number()

@@ -14,11 +14,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ErrorBanner } from "@/components/shared/error-banner";
-import {
-  hypothesisSchema,
-  DOMAINS as SCHEMA_DOMAINS,
-  METRIC_DIRECTIONS,
-} from "@/lib/validators/hypothesis-schema";
+import { hypothesisSchema } from "@/lib/validators/hypothesis-schema";
+import { DOMAINS, METRIC_DIRECTIONS } from "@/lib/utils/constants";
 import { createHypothesis, updateHypothesis } from "@/lib/actions/hypothesis-actions";
 import { hypothesisUrl } from "@/lib/utils/url";
 import type { HypothesisFormData } from "@/types/hypothesis";
@@ -164,9 +161,9 @@ export function CreateHypothesisForm({
             <SelectValue placeholder="Select a domain" />
           </SelectTrigger>
           <SelectContent>
-            {SCHEMA_DOMAINS.map((d) => (
-              <SelectItem key={d} value={d}>
-                {d}
+            {DOMAINS.map((d) => (
+              <SelectItem key={d.value} value={d.value}>
+                {d.label}
               </SelectItem>
             ))}
           </SelectContent>

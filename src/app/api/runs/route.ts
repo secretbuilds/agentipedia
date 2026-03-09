@@ -50,6 +50,13 @@ function getFileExtension(filename: string): string {
   return filename.slice(dotIdx).toLowerCase();
 }
 
+function sanitizeFilename(name: string): string {
+  const base = name.split(/[\\/]/).pop() ?? "code";
+  return base.replace(/[^\w.\-]/g, "_");
+}
+
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 function jsonError(error: string, status: number) {
   return NextResponse.json({ success: false, error }, { status });
 }
@@ -69,6 +76,9 @@ export async function POST(request: Request) {
     }
 
     // 2. Rate limit check
+    if (rateLimitMap.size > 10_000) {
+      rateLimitMap.clear();
+    }
     if (isRateLimited(auth.userId)) {
       return jsonError("Rate limit exceeded. Maximum 10 submissions per hour.", 429);
     }
@@ -85,6 +95,9 @@ export async function POST(request: Request) {
     const hypothesisId = formData.get("hypothesis_id") as string | null;
     if (!hypothesisId) {
       return jsonError("hypothesis_id is required", 400);
+    }
+    if (!UUID_REGEX.test(hypothesisId)) {
+      return jsonError("Invalid hypothesis ID", 400);
     }
 
     // 5. Extract and validate fields
@@ -113,7 +126,8 @@ export async function POST(request: Request) {
       return jsonError("results_tsv exceeds maximum size of 5 MB", 400);
     }
 
-    const tsvText = await tsvFile.text();
+    const tsvBuffer = await tsvFile.arrayBuffer();
+    const tsvText = new TextDecoder().decode(tsvBuffer);
 
     // 7. Get hypothesis for metric_direction
     const admin = createAdminClient();
@@ -163,7 +177,7 @@ export async function POST(request: Request) {
     const tsvPath = `run-files/${hypothesisId}/${runId}/results.tsv`;
     const { error: tsvUploadError } = await admin.storage
       .from("run-files")
-      .upload(tsvPath, new Uint8Array(await tsvFile.arrayBuffer()), {
+      .upload(tsvPath, new Uint8Array(tsvBuffer), {
         contentType: "text/tab-separated-values",
         upsert: false,
       });
@@ -175,7 +189,8 @@ export async function POST(request: Request) {
     storagePaths.push(tsvPath);
 
     // Upload code file
-    const codePath = `run-files/${hypothesisId}/${runId}/${codeFile.name}`;
+    const safeCodeFilename = sanitizeFilename(codeFile.name);
+    const codePath = `run-files/${hypothesisId}/${runId}/${safeCodeFilename}`;
     const { error: codeUploadError } = await admin.storage
       .from("run-files")
       .upload(codePath, new Uint8Array(codeBuffer), {
@@ -223,7 +238,7 @@ export async function POST(request: Request) {
         improvement_pct: stats.improvementPct ?? 0,
         results_tsv_url: tsvUrlData.publicUrl,
         code_file_url: codeUrlData.publicUrl,
-        code_filename: codeFile.name,
+        code_filename: safeCodeFilename,
       });
 
     if (runInsertError) {

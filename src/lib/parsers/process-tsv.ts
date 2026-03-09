@@ -1,7 +1,7 @@
 import { parseTsv } from "./tsv-parser";
 import { validateTsvRows, type ParsedTsvRow } from "./tsv-validator";
 import { extractTsvStats, type TsvStats } from "./tsv-stats";
-import type { MetricDirection } from "@/lib/validators/hypothesis-schema";
+import type { MetricDirection } from "@/lib/utils/constants";
 
 export interface ProcessTsvSuccess {
   readonly success: true;
