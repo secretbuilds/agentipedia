@@ -1,0 +1,39 @@
+import Image from "next/image";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+
+type UserAvatarProps = {
+  readonly handle: string;
+  readonly avatarUrl: string;
+  readonly size?: "sm" | "md" | "lg";
+};
+
+const SIZES: Record<string, { px: number; className: string }> = {
+  sm: { px: 24, className: "size-6" },
+  md: { px: 32, className: "size-8" },
+  lg: { px: 48, className: "size-12" },
+} as const;
+
+export function UserAvatar({
+  handle,
+  avatarUrl,
+  size = "md",
+}: UserAvatarProps) {
+  const { px, className: sizeClass } = SIZES[size];
+
+  return (
+    <Link
+      href={`/users/${handle}`}
+      className="inline-flex items-center gap-2 text-sm text-neutral-300 transition-colors hover:text-neutral-100"
+    >
+      <Image
+        src={avatarUrl}
+        alt={handle}
+        width={px}
+        height={px}
+        className={cn("rounded-full", sizeClass)}
+      />
+      <span>@{handle}</span>
+    </Link>
+  );
+}
