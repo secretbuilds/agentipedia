@@ -1,0 +1,5 @@
+commit	memory_gb	status
+baseline	38.2	keep
+a1b2c3d	not_a_number	keep
+	39.1	discard	Missing commit
+e4f5g6h	38.3	invalid_status

@@ -1,0 +1,21 @@
+commit	val_bpb	memory_gb	status	description
+baseline	1.567000	38.2	keep	Initial baseline GPT-2 style model with standard attention
+a1b2c3d	1.543000	38.5	keep	Replaced LayerNorm with RMSNorm throughout
+e4f5g6h	1.558000	39.1	discard	Doubled FFN hidden dim — marginal gain not worth memory
+i7j8k9l	1.531000	38.3	keep	Added rotary position embeddings replacing absolute
+m0n1o2p	0.000000	0.0	crash	OOM when trying 4x attention heads
+q3r4s5t	1.549000	38.4	discard	Swapped GELU for SiLU — no meaningful improvement
+u6v7w8x	1.522000	37.9	keep	Implemented grouped query attention (4 groups)
+y9z0a1b	1.535000	38.6	discard	Cosine schedule with warmup — slightly worse
+c2d3e4f	1.518000	37.8	keep	Reduced embedding dim, increased depth (deeper and thinner)
+g5h6i7j	1.540000	39.0	discard	Weight tying input/output embeddings — minimal effect
+k8l9m0n	1.512000	37.5	keep	Flash attention v2 integration
+o1p2q3r	1.525000	38.8	discard	Mixture of experts with 4 experts — too much overhead
+s4t5u6v	0.000000	0.0	crash	Gradient explosion with 10x learning rate
+w7x8y9z	1.508000	37.4	keep	Combined GQA + flash attention + deeper architecture
+a2b3c4d	1.515000	38.1	discard	Sliding window attention — worse on long range deps
+e5f6g7h	1.499000	37.2	keep	QK-norm stabilization with muP-style scaling
+i8j9k0l	1.505000	37.6	discard	Pre-norm vs post-norm experiment — marginal difference
+m1n2o3p	1.492000	37.0	keep	Optimized tokenizer with BPE merge refinement
+q4r5s6t	1.498000	37.3	discard	Lion optimizer — comparable to AdamW, not better
+u7v8w9x	1.488000	36.8	keep	Final: all improvements combined with tuned hyperparams
