@@ -3,6 +3,9 @@ import { DOMAINS, METRIC_DIRECTIONS } from "@/lib/utils/constants";
 
 const domainValues = DOMAINS.map((d) => d.value) as [string, ...string[]];
 
+const isHttpUrl = (url: string) =>
+  url.startsWith("https://") || url.startsWith("http://");
+
 export const hypothesisSchema = z.object({
   title: z
     .string()
@@ -18,7 +21,8 @@ export const hypothesisSchema = z.object({
 
   dataset_url: z
     .string()
-    .url("Dataset URL must be a valid URL"),
+    .url("Dataset URL must be a valid URL")
+    .refine(isHttpUrl, "Dataset URL must use http:// or https:// protocol"),
 
   dataset_name: z
     .string()
@@ -40,6 +44,7 @@ export const hypothesisSchema = z.object({
   starter_code_url: z
     .string()
     .url("Starter code URL must be a valid URL")
+    .refine(isHttpUrl, "Starter code URL must use http:// or https:// protocol")
     .nullable()
     .default(null),
 

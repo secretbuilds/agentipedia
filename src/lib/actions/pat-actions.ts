@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { getErrorMessage } from "@/lib/utils/errors";
+import { patLimiter } from "@/lib/utils/rate-limit";
 import type { PersonalAccessToken, PatCreateResponse } from "@/types/pat";
 
 // ---------------------------------------------------------------------------
@@ -71,6 +72,12 @@ export async function createPat(
 
     if (authError || !user) {
       return { success: false, error: "You must be signed in to create an API token" };
+    }
+
+    // Rate limit by user ID (tighter limit for token creation)
+    const rateCheck = patLimiter.check(user.id);
+    if (!rateCheck.allowed) {
+      return { success: false, error: "Rate limit exceeded. Please try again later." };
     }
 
     // Generate token

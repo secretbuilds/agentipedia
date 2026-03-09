@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { AppError, getErrorMessage } from "@/lib/utils/errors";
+import { AppError, getErrorMessage, getInternalErrorMessage } from "@/lib/utils/errors";
+
+const GENERIC_ERROR = "An unexpected error occurred. Please try again.";
 
 describe("AppError", () => {
   it("creates an error with code and message", () => {
@@ -47,30 +49,44 @@ describe("getErrorMessage", () => {
     expect(getErrorMessage(error)).toBe("Run not found");
   });
 
+  it("returns generic message for standard Error (prevents internal leaks)", () => {
+    const error = new Error("connection refused: postgres://...");
+    expect(getErrorMessage(error)).toBe(GENERIC_ERROR);
+  });
+
+  it("returns generic message for string errors", () => {
+    expect(getErrorMessage("something failed")).toBe(GENERIC_ERROR);
+  });
+
+  it("returns generic message for null", () => {
+    expect(getErrorMessage(null)).toBe(GENERIC_ERROR);
+  });
+
+  it("returns generic message for undefined", () => {
+    expect(getErrorMessage(undefined)).toBe(GENERIC_ERROR);
+  });
+
+  it("returns generic message for numbers", () => {
+    expect(getErrorMessage(42)).toBe(GENERIC_ERROR);
+  });
+
+  it("returns generic message for objects without message", () => {
+    expect(getErrorMessage({ foo: "bar" })).toBe(GENERIC_ERROR);
+  });
+});
+
+describe("getInternalErrorMessage", () => {
   it("extracts message from standard Error", () => {
-    const error = new Error("standard error");
-    expect(getErrorMessage(error)).toBe("standard error");
+    const error = new Error("detailed internal error");
+    expect(getInternalErrorMessage(error)).toBe("detailed internal error");
   });
 
   it("returns string errors directly", () => {
-    expect(getErrorMessage("something failed")).toBe("something failed");
+    expect(getInternalErrorMessage("something failed")).toBe("something failed");
   });
 
-  it("returns fallback for null", () => {
-    expect(getErrorMessage(null)).toBe("An unexpected error occurred");
-  });
-
-  it("returns fallback for undefined", () => {
-    expect(getErrorMessage(undefined)).toBe("An unexpected error occurred");
-  });
-
-  it("returns fallback for numbers", () => {
-    expect(getErrorMessage(42)).toBe("An unexpected error occurred");
-  });
-
-  it("returns fallback for objects without message", () => {
-    expect(getErrorMessage({ foo: "bar" })).toBe(
-      "An unexpected error occurred"
-    );
+  it("returns fallback for unknown types", () => {
+    expect(getInternalErrorMessage(42)).toBe("Unknown error");
+    expect(getInternalErrorMessage(null)).toBe("Unknown error");
   });
 });

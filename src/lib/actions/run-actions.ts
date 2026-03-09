@@ -6,6 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { runSchema } from "@/lib/validators/run-schema";
 import { processTsv } from "@/lib/parsers/process-tsv";
 import { getErrorMessage } from "@/lib/utils/errors";
+import { mutationLimiter } from "@/lib/utils/rate-limit";
 import {
   MAX_TSV_SIZE,
   MAX_CODE_SIZE,
@@ -80,6 +81,12 @@ export async function submitRun(
 
     if (authError || !user) {
       return { success: false, error: "You must be signed in to submit a run" };
+    }
+
+    // Rate limit by user ID
+    const rateCheck = mutationLimiter.check(user.id);
+    if (!rateCheck.allowed) {
+      return { success: false, error: "Rate limit exceeded. Please try again later." };
     }
 
     // 2. Extract fields from FormData

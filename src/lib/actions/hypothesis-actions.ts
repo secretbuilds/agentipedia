@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { hypothesisSchema } from "@/lib/validators/hypothesis-schema";
 import type { HypothesisFormData } from "@/types/hypothesis";
 import { getErrorMessage } from "@/lib/utils/errors";
+import { mutationLimiter } from "@/lib/utils/rate-limit";
 
 // ---------------------------------------------------------------------------
 // Response types
@@ -44,6 +45,12 @@ export async function createHypothesis(
 
     if (authError || !user) {
       return { success: false, error: "You must be signed in to create a hypothesis" };
+    }
+
+    // Rate limit by user ID
+    const rateCheck = mutationLimiter.check(user.id);
+    if (!rateCheck.allowed) {
+      return { success: false, error: "Rate limit exceeded. Please try again later." };
     }
 
     // Insert
@@ -109,6 +116,12 @@ export async function updateHypothesis(
 
     if (authError || !user) {
       return { success: false, error: "You must be signed in to update a hypothesis" };
+    }
+
+    // Rate limit by user ID
+    const rateCheck = mutationLimiter.check(user.id);
+    if (!rateCheck.allowed) {
+      return { success: false, error: "Rate limit exceeded. Please try again later." };
     }
 
     // Ownership check

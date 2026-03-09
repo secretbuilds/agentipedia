@@ -28,6 +28,19 @@ export interface HypothesisListResult {
 // Cursor helpers
 // ---------------------------------------------------------------------------
 
+/**
+ * ISO 8601 timestamp pattern — must start with a valid date-time prefix.
+ * Rejects values containing characters that could manipulate PostgREST filters.
+ */
+const ISO_TIMESTAMP_REGEX =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})?$/;
+
+/**
+ * Standard UUID v4 pattern (case-insensitive).
+ */
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 function encodeCursor(createdAt: string, id: string): string {
   return Buffer.from(`${createdAt}|${id}`).toString("base64url");
 }
@@ -41,6 +54,11 @@ function decodeCursor(cursor: string): { createdAt: string; id: string } | null 
     const createdAt = decoded.slice(0, separatorIdx);
     const id = decoded.slice(separatorIdx + 1);
     if (!createdAt || !id) return null;
+
+    // Validate cursor components to prevent PostgREST filter injection.
+    // createdAt must be a valid ISO timestamp; id must be a valid UUID.
+    if (!ISO_TIMESTAMP_REGEX.test(createdAt)) return null;
+    if (!UUID_REGEX.test(id)) return null;
 
     return { createdAt, id };
   } catch {
