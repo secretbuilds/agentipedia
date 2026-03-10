@@ -36,11 +36,11 @@ export function RunHeader({ run }: RunHeaderProps) {
       <ForkLineage forkedFrom={run.forked_from} />
 
       <div className="flex flex-wrap gap-2">
-        <Button variant="outline" size="sm" render={<a href={run.results_tsv_url} download />}>
+        <Button variant="outline" size="sm" nativeButton={false} render={<a href={run.results_tsv_url} download />}>
           <Download className="size-3.5" />
           results.tsv
         </Button>
-        <Button variant="outline" size="sm" render={<a href={run.code_file_url} download />}>
+        <Button variant="outline" size="sm" nativeButton={false} render={<a href={run.code_file_url} download />}>
           <Download className="size-3.5" />
           {run.code_filename}
         </Button>

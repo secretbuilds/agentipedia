@@ -27,6 +27,7 @@ export function TopNav({ user }: { readonly user: TopNavUser }) {
               render={<Link href="/create-hypothesis" />}
               variant="secondary"
               size="sm"
+              nativeButton={false}
               className="hidden sm:inline-flex"
             >
               New Hypothesis

@@ -84,6 +84,7 @@ export default async function HypothesisDetailPage({
               <Link href={`/hypotheses/${hypothesisId}/submit-run`} />
             }
             variant="default"
+            nativeButton={false}
           >
             Submit Run
           </Button>

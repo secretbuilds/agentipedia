@@ -17,7 +17,7 @@ export function EmptyState({ heading, description, action }: EmptyStateProps) {
         <p className="max-w-sm text-sm text-neutral-400">{description}</p>
       </div>
       {action && (
-        <Button render={<Link href={action.href} />} variant="secondary">
+        <Button render={<Link href={action.href} />} variant="secondary" nativeButton={false}>
           {action.label}
         </Button>
       )}

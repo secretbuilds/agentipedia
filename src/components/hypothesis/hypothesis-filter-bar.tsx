@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import {
   Select,
   SelectContent,
@@ -10,6 +10,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DOMAINS } from "@/lib/utils/constants";
+
+const DOMAIN_OPTIONS = [
+  { value: "all", label: "All Domains" },
+  ...DOMAINS.map((d) => ({ value: d.value, label: d.label })),
+] as const;
 
 const SORT_OPTIONS = [
   { value: "newest", label: "Newest" },
@@ -23,6 +28,13 @@ const STATUS_OPTIONS = [
   { value: "closed", label: "Closed" },
 ] as const;
 
+function findLabel(
+  options: readonly { readonly value: string; readonly label: string }[],
+  value: string,
+): string {
+  return options.find((o) => o.value === value)?.label ?? value;
+}
+
 export function HypothesisFilterBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -30,6 +42,10 @@ export function HypothesisFilterBar() {
   const currentDomain = searchParams.get("domain") ?? "all";
   const currentStatus = searchParams.get("status") ?? "all";
   const currentSort = searchParams.get("sort") ?? "newest";
+
+  const domainLabel = useMemo(() => findLabel(DOMAIN_OPTIONS, currentDomain), [currentDomain]);
+  const statusLabel = useMemo(() => findLabel(STATUS_OPTIONS, currentStatus), [currentStatus]);
+  const sortLabel = useMemo(() => findLabel(SORT_OPTIONS, currentSort), [currentSort]);
 
   const updateParam = useCallback(
     (key: string, value: string) => {
@@ -54,11 +70,10 @@ export function HypothesisFilterBar() {
         onValueChange={(val) => updateParam("domain", val ?? "all")}
       >
         <SelectTrigger className="min-w-[160px]">
-          <SelectValue placeholder="All Domains" />
+          <SelectValue placeholder={domainLabel}>{domainLabel}</SelectValue>
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Domains</SelectItem>
-          {DOMAINS.map((d) => (
+          {DOMAIN_OPTIONS.map((d) => (
             <SelectItem key={d.value} value={d.value}>
               {d.label}
             </SelectItem>
@@ -71,7 +86,7 @@ export function HypothesisFilterBar() {
         onValueChange={(val) => updateParam("status", val ?? "all")}
       >
         <SelectTrigger className="min-w-[140px]">
-          <SelectValue placeholder="All Statuses" />
+          <SelectValue placeholder={statusLabel}>{statusLabel}</SelectValue>
         </SelectTrigger>
         <SelectContent>
           {STATUS_OPTIONS.map((opt) => (
@@ -87,7 +102,7 @@ export function HypothesisFilterBar() {
         onValueChange={(val) => updateParam("sort", val ?? "newest")}
       >
         <SelectTrigger className="min-w-[140px]">
-          <SelectValue placeholder="Sort" />
+          <SelectValue placeholder={sortLabel}>{sortLabel}</SelectValue>
         </SelectTrigger>
         <SelectContent>
           {SORT_OPTIONS.map((opt) => (

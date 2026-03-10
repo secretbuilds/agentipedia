@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getRunById, getExperimentsByRunId } from "@/lib/queries/run-queries";
 import { RunHeader } from "@/components/run/run-header";
 import { RunStats } from "@/components/run/run-stats";
@@ -10,6 +11,15 @@ import { Separator } from "@/components/ui/separator";
 type PageProps = {
   params: Promise<{ runId: string }>;
 };
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { runId } = await params;
+  const run = await getRunById(runId);
+  if (!run) {
+    return { title: "Not Found — Agentipedia" };
+  }
+  return { title: `Run: ${run.goal.slice(0, 60)} — Agentipedia` };
+}
 
 async function fetchCodeContent(url: string): Promise<string> {
   try {
