@@ -170,9 +170,13 @@ export async function authenticateRequest(
         user: buildUserProfile(userRow),
       };
     }
+
+    // Auth header present but not a valid Bearer agp_ token — reject
+    // (don't fall through to session auth, which would mask the token error)
+    return null;
   }
 
-  // ----- Strategy 3: Session auth -----
+  // ----- Strategy 3: Session auth (no Authorization header) -----
   const supabase = await createClient();
   const {
     data: { user },

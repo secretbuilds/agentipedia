@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hashToken } from "@/lib/auth/hash-token";
 import { createAgentSchema } from "@/lib/validators/agent-schema";
-import { patLimiter } from "@/lib/utils/rate-limit";
+import { agentLimiter } from "@/lib/utils/rate-limit";
 import { getErrorMessage } from "@/lib/utils/errors";
 import type { Agent, AgentCreateResponse } from "@/types/agent";
 
@@ -59,7 +59,7 @@ export async function createAgent(
     }
 
     // Rate limit
-    const rateCheck = patLimiter.check(user.id);
+    const rateCheck = agentLimiter.check(user.id);
     if (!rateCheck.allowed) {
       return { success: false, error: "Rate limit exceeded. Please try again later." };
     }
@@ -74,24 +74,13 @@ export async function createAgent(
     }
     const parsed = parseResult.data;
 
-    // Check slug uniqueness (admin client to bypass RLS)
-    const admin = createAdminClient();
-    const { data: existing } = await admin
-      .from("agents")
-      .select("id")
-      .eq("agent_id_slug", parsed.agent_id_slug)
-      .single();
-
-    if (existing) {
-      return { success: false, error: "Agent slug already taken" };
-    }
-
     // Generate key
     const rawToken = await generateRawToken();
     const tokenHash = await hashToken(rawToken);
     const lastFour = rawToken.slice(-4);
 
-    // Insert
+    // Insert (rely on UNIQUE constraint for slug uniqueness — no TOCTOU race)
+    const admin = createAdminClient();
     const { data: agent, error } = await admin
       .from("agents")
       .insert({
@@ -106,6 +95,10 @@ export async function createAgent(
       .single();
 
     if (error || !agent) {
+      // Postgres unique violation on agent_id_slug
+      if (error?.code === "23505") {
+        return { success: false, error: "Agent slug already taken" };
+      }
       console.error("createAgent insert error:", error);
       return { success: false, error: "Failed to create agent" };
     }
@@ -144,7 +137,7 @@ export async function listAgents(): Promise<ActionResult<readonly Agent[]>> {
 
     const { data, error } = await supabase
       .from("agents")
-      .select("*")
+      .select("id, user_id, agent_name, agent_id_slug, description, created_at, last_used_at, revoked_at, last_four")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
@@ -189,10 +182,10 @@ export async function revokeAgent(agentId: string): Promise<ActionResult> {
       return { success: false, error: "You must be signed in to revoke an agent" };
     }
 
-    // Ownership check + revoke (RLS handles ownership but be explicit)
+    // Ownership + already-revoked check
     const { data: existing, error: fetchError } = await supabase
       .from("agents")
-      .select("user_id")
+      .select("user_id, revoked_at")
       .eq("id", agentId)
       .single();
 
@@ -202,6 +195,10 @@ export async function revokeAgent(agentId: string): Promise<ActionResult> {
 
     if (existing.user_id !== user.id) {
       return { success: false, error: "You can only revoke your own agents" };
+    }
+
+    if (existing.revoked_at) {
+      return { success: false, error: "Agent is already revoked" };
     }
 
     const { error: updateError } = await supabase
@@ -243,7 +240,7 @@ export async function regenerateAgentKey(
     }
 
     // Rate limit
-    const rateCheck = patLimiter.check(user.id);
+    const rateCheck = agentLimiter.check(user.id);
     if (!rateCheck.allowed) {
       return { success: false, error: "Rate limit exceeded. Please try again later." };
     }

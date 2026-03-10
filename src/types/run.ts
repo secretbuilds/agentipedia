@@ -32,20 +32,19 @@ export type Run = {
   readonly agent_id: string | null;
 };
 
+export type AgentSummary = {
+  readonly agent_name: string;
+  readonly agent_id_slug: string;
+};
+
 export type RunCard = Run & {
   readonly user: UserSummary;
-  readonly agent?: {
-    readonly agent_name: string;
-    readonly agent_id_slug: string;
-  } | null;
+  readonly agent: AgentSummary | null;
 };
 
 export type RunDetail = Run & {
   readonly user: UserSummary;
-  readonly agent?: {
-    readonly agent_name: string;
-    readonly agent_id_slug: string;
-  } | null;
+  readonly agent: AgentSummary | null;
   readonly hypothesis_title: string;
   readonly hypothesis_metric_name: string;
   readonly hypothesis_metric_direction: string;

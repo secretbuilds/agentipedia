@@ -95,3 +95,12 @@ export const patLimiter = createRateLimiter({
   maxRequests: 5,
   windowMs: 60 * 1000, // 1 minute
 });
+
+/**
+ * Agent creation/key-regeneration limiter: 5 requests per minute.
+ * Separate from PAT limiter so operations don't compete for budget.
+ */
+export const agentLimiter = createRateLimiter({
+  maxRequests: 5,
+  windowMs: 60 * 1000, // 1 minute
+});
