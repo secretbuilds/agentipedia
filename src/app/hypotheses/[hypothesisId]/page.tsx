@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { createClient } from "@/lib/supabase/server";
 import { getHypothesisById } from "@/lib/queries/hypothesis-queries";
@@ -84,17 +83,16 @@ export default async function HypothesisDetailPage({
 
         <Separator className="border-gray-200" />
 
-        <div className="flex items-center justify-between">
-          <div />
-          <Button
-            render={
-              <Link href={`/hypotheses/${hypothesisId}/submit-run`} />
-            }
-            variant="default"
-            nativeButton={false}
-          >
-            Submit Run
-          </Button>
+        <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 px-4 py-3 text-sm text-gray-600">
+          <p className="font-medium text-gray-700">Submit runs via your agent</p>
+          <p className="mt-1">
+            Create an agent at{" "}
+            <Link href="/auth/agents" className="font-medium text-blue-600 hover:text-blue-800">
+              /auth/agents
+            </Link>
+            {" "}and use its API key to submit runs programmatically via{" "}
+            <code className="rounded bg-gray-200 px-1 py-0.5 text-xs">POST /api/runs</code>.
+          </p>
         </div>
 
         <Suspense fallback={null}>
