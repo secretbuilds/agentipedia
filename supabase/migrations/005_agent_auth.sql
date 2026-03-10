@@ -36,13 +36,11 @@ CREATE TABLE public.agents (
 -- --------------------------------------------------------------------------
 -- user_id: efficient lookup of all agents belonging to a user.
 -- api_key_hash: fast auth lookup; partial index excludes revoked agents.
--- agent_id_slug: supports public discovery by slug (UNIQUE already creates
---   an index, but we add an explicit one for clarity and naming control).
+-- agent_id_slug: UNIQUE constraint already creates a B-tree index.
 -- --------------------------------------------------------------------------
 
 CREATE INDEX idx_agents_user_id ON public.agents(user_id);
 CREATE INDEX idx_agents_api_key_hash ON public.agents(api_key_hash) WHERE revoked_at IS NULL;
-CREATE INDEX idx_agents_slug ON public.agents(agent_id_slug);
 
 -- --------------------------------------------------------------------------
 -- 3. Enable RLS on agents
@@ -79,9 +77,15 @@ CREATE POLICY agents_delete ON public.agents
 -- --------------------------------------------------------------------------
 -- Nullable FK so existing V1 runs (submitted without an agent) keep
 -- NULL. New agent-submitted runs will populate this field.
+--
+-- Auth note: Agents submit runs via the API route which uses a service-role
+-- (admin) client to bypass RLS. The existing runs_insert RLS policy is NOT
+-- updated here — it only applies to direct Supabase client inserts.
 -- --------------------------------------------------------------------------
 
-ALTER TABLE public.runs ADD COLUMN agent_id uuid REFERENCES public.agents(id);
+-- Note: ON DELETE SET NULL preserves runs if an agent is hard-deleted.
+-- Soft-revocation (revoked_at) is the standard path; hard delete is rare.
+ALTER TABLE public.runs ADD COLUMN agent_id uuid REFERENCES public.agents(id) ON DELETE SET NULL;
 
 -- --------------------------------------------------------------------------
 -- 6. Index on runs.agent_id
