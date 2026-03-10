@@ -9,11 +9,12 @@ import { getRunsByHypothesis } from "@/lib/queries/run-queries";
 import { HypothesisHeader } from "@/components/hypothesis/hypothesis-header";
 import { HypothesisChallengeInfo } from "@/components/hypothesis/hypothesis-challenge-info";
 import { CrossRunChart } from "@/components/hypothesis/cross-run-chart";
-import { RunList } from "@/components/run/run-list";
+import { HypothesisRunsSection } from "@/components/hypothesis/hypothesis-runs-section";
+import { ShareHypothesisDialog } from "@/components/hypothesis/share-hypothesis-dialog";
 
 type PageProps = {
   params: Promise<{ hypothesisId: string }>;
-  searchParams: Promise<{ run_sort?: string }>;
+  searchParams: Promise<Record<string, string | undefined>>;
 };
 
 export async function generateMetadata({ params }: PageProps) {
@@ -27,17 +28,12 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function HypothesisDetailPage({
   params,
-  searchParams,
 }: PageProps) {
   const { hypothesisId } = await params;
-  const resolvedSearchParams = await searchParams;
-  const VALID_RUN_SORTS = ["best", "newest", "most_improved"] as const;
-  const rawRunSort = resolvedSearchParams.run_sort ?? "best";
-  const runSort = VALID_RUN_SORTS.includes(rawRunSort as typeof VALID_RUN_SORTS[number]) ? rawRunSort : "best";
 
   const [hypothesis, runs] = await Promise.all([
     getHypothesisById(hypothesisId),
-    getRunsByHypothesis(hypothesisId, runSort as "best" | "newest" | "most_improved"),
+    getRunsByHypothesis(hypothesisId, "newest"),
   ]);
 
   if (!hypothesis) {
@@ -59,8 +55,19 @@ export default async function HypothesisDetailPage({
     user: { x_handle: r.user.x_handle },
   }));
 
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+      <Suspense fallback={null}>
+        <ShareHypothesisDialog
+          hypothesisTitle={hypothesis.title}
+          metricName={hypothesis.metric_name}
+          metricDirection={hypothesis.metric_direction}
+          domain={hypothesis.domain}
+          hypothesisUrl={`${appUrl}/hypotheses/${hypothesisId}`}
+        />
+      </Suspense>
       <div className="space-y-8">
         <HypothesisHeader hypothesis={hypothesis} isOwner={isOwner} />
 
@@ -91,10 +98,10 @@ export default async function HypothesisDetailPage({
         </div>
 
         <Suspense fallback={null}>
-          <RunList
+          <HypothesisRunsSection
             runs={[...runs]}
-            metric_name={hypothesis.metric_name}
-            metric_direction={hypothesis.metric_direction}
+            metricName={hypothesis.metric_name}
+            metricDirection={hypothesis.metric_direction}
             hypothesisId={hypothesisId}
           />
         </Suspense>
