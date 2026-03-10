@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
-import type { RunCard, RunDetail } from "@/types/run";
+import type { RunCard, RunDetail, RunLeaf, LineageStep, RunChild, CodeSnapshot } from "@/types/run";
 import type { Experiment } from "@/types/experiment";
 import type { UserSummary } from "@/types/user";
 
@@ -225,5 +225,192 @@ export async function getExperimentsByRunId(
     memory_gb: row.memory_gb,
     status: row.status,
     description: row.description,
+  }));
+}
+
+// ---------------------------------------------------------------------------
+// DAG Navigation Queries
+// ---------------------------------------------------------------------------
+
+/**
+ * Fetch leaf runs (runs with no children) for a hypothesis.
+ * Uses the `run_leaves` database view.
+ */
+export async function getLeavesByHypothesis(
+  hypothesisId: string,
+): Promise<readonly RunLeaf[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("run_leaves")
+    .select(`
+      id,
+      hypothesis_id,
+      user_id,
+      forked_from,
+      best_metric,
+      synthesis,
+      created_at,
+      goal,
+      depth,
+      users!runs_user_id_fkey (
+        x_handle,
+        x_display_name,
+        x_avatar_url
+      )
+    `)
+    .eq("hypothesis_id", hypothesisId);
+
+  if (error) {
+    console.error("getLeavesByHypothesis error:", error);
+    return [];
+  }
+
+  if (!data) return [];
+
+  return data.map((row): RunLeaf => {
+    const userRow = row.users as unknown as UserSummary | null;
+    return {
+      id: row.id,
+      hypothesis_id: row.hypothesis_id,
+      user_id: row.user_id,
+      forked_from: row.forked_from,
+      best_metric: row.best_metric,
+      synthesis: row.synthesis ?? null,
+      created_at: row.created_at,
+      goal: row.goal,
+      depth: row.depth ?? 0,
+      user: userRow ?? {
+        x_handle: "",
+        x_display_name: "",
+        x_avatar_url: "",
+      },
+    };
+  });
+}
+
+/**
+ * Fetch the full lineage (ancestor chain) for a run, from root to the target.
+ * Calls the `run_lineage` database function.
+ */
+export async function getRunLineage(
+  runId: string,
+): Promise<readonly LineageStep[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .rpc("run_lineage", { target_id: runId });
+
+  if (error) {
+    console.error("getRunLineage error:", error);
+    return [];
+  }
+
+  if (!data) return [];
+
+  const rows = data as unknown as Array<Record<string, unknown>>;
+
+  return rows.map((row): LineageStep => ({
+    id: row.id as string,
+    hypothesis_id: row.hypothesis_id as string,
+    forked_from: (row.forked_from as string) ?? null,
+    best_metric: row.best_metric as number,
+    synthesis: (row.synthesis as string) ?? null,
+    created_at: row.created_at as string,
+    depth: (row.depth as number) ?? 0,
+  }));
+}
+
+/**
+ * Fetch direct children of a run (runs that forked from it).
+ * Calls the `run_children` database function.
+ */
+export async function getRunChildren(
+  runId: string,
+): Promise<readonly RunChild[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .rpc("run_children", { target_id: runId });
+
+  if (error) {
+    console.error("getRunChildren error:", error);
+    return [];
+  }
+
+  if (!data) return [];
+
+  const rows = data as unknown as Array<Record<string, unknown>>;
+
+  return rows.map((row): RunChild => ({
+    id: row.id as string,
+    hypothesis_id: row.hypothesis_id as string,
+    user_id: row.user_id as string,
+    best_metric: row.best_metric as number,
+    synthesis: (row.synthesis as string) ?? null,
+    created_at: row.created_at as string,
+    goal: row.goal as string,
+  }));
+}
+
+/**
+ * Fetch code snapshot and file metadata for a run.
+ * Returns null if the run is not found.
+ */
+export async function getRunCodeSnapshot(
+  runId: string,
+): Promise<{ code_snapshot: CodeSnapshot | null; code_file_url: string; code_filename: string } | null> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("runs")
+    .select("code_snapshot, code_file_url, code_filename")
+    .eq("id", runId)
+    .single();
+
+  if (error || !data) {
+    if (error && error.code !== "PGRST116") {
+      console.error("getRunCodeSnapshot error:", error);
+    }
+    return null;
+  }
+
+  return {
+    code_snapshot: (data.code_snapshot as CodeSnapshot) ?? null,
+    code_file_url: data.code_file_url,
+    code_filename: data.code_filename,
+  };
+}
+
+/**
+ * Fetch the best-performing lineage path for a hypothesis.
+ * Calls the `best_path` database function.
+ */
+export async function getBestPath(
+  hypothesisId: string,
+  metricDirection: string,
+): Promise<readonly LineageStep[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .rpc("best_path", { p_hypothesis_id: hypothesisId, p_metric_direction: metricDirection });
+
+  if (error) {
+    console.error("getBestPath error:", error);
+    return [];
+  }
+
+  if (!data) return [];
+
+  const rows = data as unknown as Array<Record<string, unknown>>;
+
+  return rows.map((row): LineageStep => ({
+    id: row.id as string,
+    hypothesis_id: row.hypothesis_id as string,
+    forked_from: (row.forked_from as string) ?? null,
+    best_metric: row.best_metric as number,
+    synthesis: (row.synthesis as string) ?? null,
+    created_at: row.created_at as string,
+    depth: (row.depth as number) ?? 0,
   }));
 }
