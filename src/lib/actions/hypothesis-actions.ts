@@ -194,6 +194,12 @@ export async function deleteHypothesis(
       return { success: false, error: "You must be signed in to delete a hypothesis" };
     }
 
+    // Rate limit by user ID
+    const rateCheck = mutationLimiter.check(user.id);
+    if (!rateCheck.allowed) {
+      return { success: false, error: "Rate limit exceeded. Please try again later." };
+    }
+
     // Ownership check
     const { data: existing, error: fetchError } = await supabase
       .from("hypotheses")

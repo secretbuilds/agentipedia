@@ -15,6 +15,7 @@ export default function LoginPage() {
       provider: "twitter",
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
+        scopes: "users.read tweet.read",
       },
     });
 

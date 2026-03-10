@@ -163,6 +163,14 @@ export async function submitRun(
 
     const codeBuffer = await codeFile.arrayBuffer();
 
+    // Validate code file contains valid UTF-8 text (no binary content)
+    try {
+      const codeDecoder = new TextDecoder("utf-8", { fatal: true });
+      codeDecoder.decode(codeBuffer);
+    } catch {
+      return { success: false, error: "Code file must be valid UTF-8 text" };
+    }
+
     // 8. Upload results.tsv to Supabase Storage
     const tsvPath = `run-files/${hypothesisId}/${runId}/results.tsv`;
     const { error: tsvUploadError } = await admin.storage
@@ -184,7 +192,7 @@ export async function submitRun(
     const { error: codeUploadError } = await admin.storage
       .from("run-files")
       .upload(codePath, new Uint8Array(codeBuffer), {
-        contentType: "application/octet-stream",
+        contentType: "text/plain; charset=utf-8",
         upsert: false,
       });
 
@@ -301,6 +309,12 @@ export async function deleteRun(
 
     if (authError || !user) {
       return { success: false, error: "You must be signed in to delete a run" };
+    }
+
+    // Rate limit by user ID
+    const rateCheck = mutationLimiter.check(user.id);
+    if (!rateCheck.allowed) {
+      return { success: false, error: "Rate limit exceeded. Please try again later." };
     }
 
     // Fetch run for ownership check + file paths

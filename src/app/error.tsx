@@ -15,7 +15,12 @@ export default function GlobalError({
         Something went wrong
       </h1>
       <p className="max-w-md text-sm text-neutral-400">
-        {error.message || "An unexpected error occurred. Please try again."}
+        An unexpected error occurred. Please try again.
+        {error.digest && (
+          <span className="mt-1 block text-xs text-neutral-500">
+            Error ID: {error.digest}
+          </span>
+        )}
       </p>
       <Button variant="secondary" onClick={reset}>
         Try again

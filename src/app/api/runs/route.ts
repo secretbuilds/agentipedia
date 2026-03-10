@@ -129,16 +129,23 @@ export async function POST(request: Request) {
     const tsvBuffer = await tsvFile.arrayBuffer();
     const tsvText = new TextDecoder().decode(tsvBuffer);
 
-    // 7. Get hypothesis for metric_direction
+    // 7. Validate hypothesis exists and is open, get metric_direction
     const admin = createAdminClient();
     const { data: hypothesis, error: hypoError } = await admin
       .from("hypotheses")
-      .select("metric_direction")
+      .select("id, status, metric_direction")
       .eq("id", hypothesisId)
       .single();
 
     if (hypoError || !hypothesis) {
       return jsonError("Hypothesis not found", 404);
+    }
+
+    if (hypothesis.status !== "open") {
+      return jsonError(
+        "This hypothesis is not accepting new runs. Only hypotheses with status 'open' accept submissions.",
+        403,
+      );
     }
 
     // 8. Process TSV server-side
@@ -169,6 +176,14 @@ export async function POST(request: Request) {
 
     const codeBuffer = await codeFile.arrayBuffer();
 
+    // Validate code file contains valid UTF-8 text (no binary content)
+    try {
+      const codeDecoder = new TextDecoder("utf-8", { fatal: true });
+      codeDecoder.decode(codeBuffer);
+    } catch {
+      return jsonError("Code file must be valid UTF-8 text", 400);
+    }
+
     // 10. Upload files and insert data
     const runId = generateUuid();
     const storagePaths: string[] = [];
@@ -194,7 +209,7 @@ export async function POST(request: Request) {
     const { error: codeUploadError } = await admin.storage
       .from("run-files")
       .upload(codePath, new Uint8Array(codeBuffer), {
-        contentType: "application/octet-stream",
+        contentType: "text/plain; charset=utf-8",
         upsert: false,
       });
 
@@ -284,6 +299,6 @@ export async function POST(request: Request) {
     );
   } catch (err) {
     console.error("POST /api/runs unexpected error:", err);
-    return jsonError(getErrorMessage(err), 500);
+    return jsonError("An unexpected error occurred. Please try again later.", 500);
   }
 }
