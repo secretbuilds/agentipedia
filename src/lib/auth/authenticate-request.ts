@@ -4,21 +4,49 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { hashToken } from "@/lib/auth/hash-token";
 import type { UserProfile } from "@/types/user";
+import type { Agent } from "@/types/agent";
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
+/** @deprecated Use `AuthResult` instead. */
 export interface AuthenticatedUser {
   readonly userId: string;
   readonly user: UserProfile;
 }
+
+/** Discriminated union returned by `authenticateRequest`. */
+export type AuthResult =
+  | { readonly kind: "user"; readonly userId: string; readonly user: UserProfile }
+  | { readonly kind: "agent"; readonly userId: string; readonly user: UserProfile; readonly agent: Agent }
+  | { readonly kind: "pat"; readonly userId: string; readonly user: UserProfile };
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
 const PAT_PREFIX = "agp_";
+
+function buildUserProfile(row: {
+  id: string;
+  x_user_id: string;
+  x_handle: string;
+  x_display_name: string;
+  x_avatar_url: string;
+  created_at: string;
+  last_login_at: string;
+}): UserProfile {
+  return {
+    id: row.id,
+    x_user_id: row.x_user_id,
+    x_handle: row.x_handle,
+    x_display_name: row.x_display_name,
+    x_avatar_url: row.x_avatar_url,
+    created_at: row.created_at,
+    last_login_at: row.last_login_at,
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Main
@@ -27,17 +55,19 @@ const PAT_PREFIX = "agp_";
 /**
  * Authenticate an incoming request.
  *
- * Strategy:
- * 1. Check Authorization header for `Bearer agp_...` — PAT-based auth.
- *    Hash the token and look it up in `api_tokens` via the admin client.
- * 2. Fall back to Supabase session auth (cookie-based).
+ * Resolution order for Bearer `agp_` tokens:
+ * 1. Agent auth — hash the token, look up in `agents` by `api_key_hash`
+ *    where `revoked_at IS NULL`. If found, return kind "agent".
+ * 2. PAT auth — fall through to `api_tokens` lookup. Return kind "pat".
  *
- * Returns the authenticated user or null if unauthenticated.
+ * If no Bearer header is present:
+ * 3. Session auth — Supabase cookie-based auth. Return kind "user".
+ *
+ * Returns null if unauthenticated.
  */
 export async function authenticateRequest(
   request: Request,
-): Promise<AuthenticatedUser | null> {
-  // ----- Strategy 1: PAT auth via Authorization header -----
+): Promise<AuthResult | null> {
   const authHeader = request.headers.get("authorization");
 
   if (authHeader) {
@@ -47,7 +77,58 @@ export async function authenticateRequest(
       const tokenHash = await hashToken(rawToken);
       const admin = createAdminClient();
 
-      // Look up the token by hash
+      // ----- Strategy 1: Agent auth -----
+      const { data: agentRow, error: agentError } = await admin
+        .from("agents")
+        .select("id, user_id, agent_name, agent_id_slug, description, created_at, last_used_at, revoked_at, last_four")
+        .eq("api_key_hash", tokenHash)
+        .is("revoked_at", null)
+        .single();
+
+      if (!agentError && agentRow) {
+        // Fetch the agent owner's profile
+        const { data: ownerRow, error: ownerError } = await admin
+          .from("users")
+          .select("*")
+          .eq("id", agentRow.user_id)
+          .single();
+
+        if (ownerError || !ownerRow) {
+          return null;
+        }
+
+        // Update last_used_at (fire-and-forget)
+        admin
+          .from("agents")
+          .update({ last_used_at: new Date().toISOString() })
+          .eq("id", agentRow.id)
+          .then(({ error }) => {
+            if (error) {
+              console.error("Failed to update last_used_at for agent:", error);
+            }
+          });
+
+        const agent: Agent = {
+          id: agentRow.id,
+          user_id: agentRow.user_id,
+          agent_name: agentRow.agent_name,
+          agent_id_slug: agentRow.agent_id_slug,
+          description: agentRow.description,
+          created_at: agentRow.created_at,
+          last_used_at: agentRow.last_used_at,
+          revoked_at: agentRow.revoked_at,
+          last_four: agentRow.last_four,
+        };
+
+        return {
+          kind: "agent",
+          userId: agentRow.user_id,
+          user: buildUserProfile(ownerRow),
+          agent,
+        };
+      }
+
+      // ----- Strategy 2: PAT auth -----
       const { data: tokenRow, error: tokenError } = await admin
         .from("api_tokens")
         .select("id, user_id, revoked_at")
@@ -58,12 +139,10 @@ export async function authenticateRequest(
         return null;
       }
 
-      // Reject revoked tokens
       if (tokenRow.revoked_at) {
         return null;
       }
 
-      // Fetch the user profile
       const { data: userRow, error: userError } = await admin
         .from("users")
         .select("*")
@@ -74,7 +153,7 @@ export async function authenticateRequest(
         return null;
       }
 
-      // Update last_used_at (fire-and-forget, don't block the response)
+      // Update last_used_at (fire-and-forget)
       admin
         .from("api_tokens")
         .update({ last_used_at: new Date().toISOString() })
@@ -86,21 +165,14 @@ export async function authenticateRequest(
         });
 
       return {
+        kind: "pat",
         userId: userRow.id,
-        user: {
-          id: userRow.id,
-          x_user_id: userRow.x_user_id,
-          x_handle: userRow.x_handle,
-          x_display_name: userRow.x_display_name,
-          x_avatar_url: userRow.x_avatar_url,
-          created_at: userRow.created_at,
-          last_login_at: userRow.last_login_at,
-        },
+        user: buildUserProfile(userRow),
       };
     }
   }
 
-  // ----- Strategy 2: Session auth -----
+  // ----- Strategy 3: Session auth -----
   const supabase = await createClient();
   const {
     data: { user },
@@ -122,15 +194,8 @@ export async function authenticateRequest(
   }
 
   return {
+    kind: "user",
     userId: userRow.id,
-    user: {
-      id: userRow.id,
-      x_user_id: userRow.x_user_id,
-      x_handle: userRow.x_handle,
-      x_display_name: userRow.x_display_name,
-      x_avatar_url: userRow.x_avatar_url,
-      created_at: userRow.created_at,
-      last_login_at: userRow.last_login_at,
-    },
+    user: buildUserProfile(userRow),
   };
 }
