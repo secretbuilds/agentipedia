@@ -2,6 +2,7 @@ import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { hashToken } from "@/lib/auth/hash-token";
 import type { UserProfile } from "@/types/user";
 
 // ---------------------------------------------------------------------------
@@ -18,17 +19,6 @@ export interface AuthenticatedUser {
 // ---------------------------------------------------------------------------
 
 const PAT_PREFIX = "agp_";
-
-/**
- * SHA-256 hash of a raw token string. Returns hex digest.
- */
-async function hashToken(raw: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(raw);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-}
 
 // ---------------------------------------------------------------------------
 // Main

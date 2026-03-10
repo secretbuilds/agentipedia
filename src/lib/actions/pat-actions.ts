@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { hashToken } from "@/lib/auth/hash-token";
 import { getErrorMessage } from "@/lib/utils/errors";
 import { patLimiter } from "@/lib/utils/rate-limit";
 import type { PersonalAccessToken, PatCreateResponse } from "@/types/pat";
@@ -27,17 +28,6 @@ async function generateRawToken(): Promise<string> {
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
   return `agp_${hex}`;
-}
-
-/**
- * SHA-256 hash of a raw token string. Returns hex digest.
- */
-async function hashToken(raw: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(raw);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 // ---------------------------------------------------------------------------
