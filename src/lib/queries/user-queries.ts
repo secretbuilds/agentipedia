@@ -169,5 +169,8 @@ export async function getUserRuns(
     results_tsv_url: row.results_tsv_url,
     code_file_url: row.code_file_url,
     code_filename: row.code_filename,
+    code_snapshot: row.code_snapshot ?? null,
+    synthesis: row.synthesis ?? null,
+    depth: row.depth ?? 0,
   }));
 }

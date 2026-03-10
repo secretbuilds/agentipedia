@@ -102,6 +102,9 @@ export async function getRunsByHypothesis(
       results_tsv_url: row.results_tsv_url,
       code_file_url: row.code_file_url,
       code_filename: row.code_filename,
+      code_snapshot: row.code_snapshot ?? null,
+      synthesis: row.synthesis ?? null,
+      depth: row.depth ?? 0,
       user: userRow ?? {
         x_handle: "",
         x_display_name: "",
@@ -177,6 +180,9 @@ export async function getRunById(
     results_tsv_url: data.results_tsv_url,
     code_file_url: data.code_file_url,
     code_filename: data.code_filename,
+    code_snapshot: data.code_snapshot ?? null,
+    synthesis: data.synthesis ?? null,
+    depth: data.depth ?? 0,
     user: userRow ?? {
       x_handle: "",
       x_display_name: "",

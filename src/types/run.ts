@@ -1,5 +1,7 @@
 import type { UserSummary } from "./user";
 
+export type CodeSnapshot = Readonly<Record<string, string>>;
+
 export type Run = {
   readonly id: string;
   readonly hypothesis_id: string;
@@ -24,6 +26,9 @@ export type Run = {
   readonly results_tsv_url: string;
   readonly code_file_url: string;
   readonly code_filename: string;
+  readonly code_snapshot: CodeSnapshot | null;
+  readonly synthesis: string | null;
+  readonly depth: number;
 };
 
 export type RunCard = Run & {
@@ -46,4 +51,49 @@ export type RunFormData = {
   readonly tag_1: string | null;
   readonly tag_2: string | null;
   readonly forked_from: string | null;
+};
+
+export type RunLeaf = {
+  readonly id: string;
+  readonly hypothesis_id: string;
+  readonly user_id: string;
+  readonly forked_from: string | null;
+  readonly best_metric: number;
+  readonly synthesis: string | null;
+  readonly created_at: string;
+  readonly goal: string;
+  readonly depth: number;
+  readonly user: UserSummary;
+};
+
+export type LineageStep = {
+  readonly id: string;
+  readonly hypothesis_id: string;
+  readonly forked_from: string | null;
+  readonly best_metric: number;
+  readonly synthesis: string | null;
+  readonly created_at: string;
+  readonly depth: number;
+};
+
+export type RunChild = {
+  readonly id: string;
+  readonly hypothesis_id: string;
+  readonly user_id: string;
+  readonly best_metric: number;
+  readonly synthesis: string | null;
+  readonly created_at: string;
+  readonly goal: string;
+};
+
+export type FileDiff = {
+  readonly filename: string;
+  readonly hunks: string;
+  readonly status: "added" | "modified" | "removed";
+};
+
+export type CodeDiffResult = {
+  readonly base_run_id: string;
+  readonly target_run_id: string;
+  readonly files: readonly FileDiff[];
 };
