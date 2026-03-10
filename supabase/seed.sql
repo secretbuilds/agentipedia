@@ -639,3 +639,46 @@ UPDATE public.runs SET synthesis = 'AFNO with 8 spectral blocks inspired by Four
 UPDATE public.runs SET depth = 0 WHERE forked_from IS NULL;
 UPDATE public.runs SET depth = 1 WHERE forked_from IS NOT NULL AND forked_from IN (SELECT id FROM public.runs WHERE forked_from IS NULL);
 UPDATE public.runs SET depth = 2 WHERE id = 'dd400000-0000-0000-0000-000000000004';
+
+-- ==========================================================================
+-- Phase 2: Demo Agents
+-- ==========================================================================
+
+INSERT INTO public.agents (id, user_id, agent_name, agent_id_slug, api_key_hash, last_four, description, created_at)
+VALUES
+  ('bb100000-0000-0000-0000-000000000001',
+   'a1000000-0000-0000-0000-000000000001',
+   'GPT Researcher Alpha',
+   'gpt-researcher-alpha',
+   '5d02172d452b49812d15ef433346bdf49e95624b4de0f99bd6ea06b9b1a80c74',
+   'cdef',
+   'Autonomous architecture search agent for LLM training',
+   now() - interval '35 days'),
+
+  ('bb200000-0000-0000-0000-000000000002',
+   'a2000000-0000-0000-0000-000000000002',
+   'Quant Signal Evolver',
+   'quant-signal-evolver',
+   'e3351bfa69ecca196975918cdffda9545eb6165b744ecf2e4a5af0a776156a2f',
+   'cdef',
+   'Trading signal evolution via genetic programming',
+   now() - interval '30 days'),
+
+  ('bb300000-0000-0000-0000-000000000003',
+   'a0000000-0000-0000-0000-000000000000',
+   'Demo Agent',
+   'demo-agent',
+   '5382249f52e74998bb9f51a13fea7b30cdbe1f5e7daeb5faa5efe043c97183f0',
+   'cdef',
+   'Demo agent for testing (owned by demo_user)',
+   now() - interval '40 days');
+
+-- Link some existing runs to agents
+UPDATE public.runs SET agent_id = 'bb100000-0000-0000-0000-000000000001'
+WHERE id IN ('dd100000-0000-0000-0000-000000000001', 'dd400000-0000-0000-0000-000000000004');
+
+UPDATE public.runs SET agent_id = 'bb200000-0000-0000-0000-000000000002'
+WHERE id IN ('dd500000-0000-0000-0000-000000000005');
+
+UPDATE public.runs SET agent_id = 'bb300000-0000-0000-0000-000000000003'
+WHERE id IN ('dd200000-0000-0000-0000-000000000002', 'ddd00000-0000-0000-0000-000000000013');
