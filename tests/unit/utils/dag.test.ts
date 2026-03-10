@@ -30,6 +30,7 @@ function makeRun(overrides: Partial<RunCard>): RunCard {
     code_snapshot: null,
     synthesis: null,
     depth: 0,
+    agent_id: null,
     user: { x_handle: "test", x_display_name: "Test", x_avatar_url: "" },
     ...overrides,
   };

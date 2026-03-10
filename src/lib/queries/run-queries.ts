@@ -48,6 +48,10 @@ export async function getRunsByHypothesis(
         x_handle,
         x_display_name,
         x_avatar_url
+      ),
+      agents!runs_agent_id_fkey (
+        agent_name,
+        agent_id_slug
       )
     `)
     .eq("hypothesis_id", hypothesisId);
@@ -78,6 +82,7 @@ export async function getRunsByHypothesis(
 
   return data.map((row): RunCard => {
     const userRow = row.users as unknown as UserSummary | null;
+    const agentRow = row.agents as unknown as { agent_name: string; agent_id_slug: string } | null;
     return {
       id: row.id,
       hypothesis_id: row.hypothesis_id,
@@ -105,11 +110,13 @@ export async function getRunsByHypothesis(
       code_snapshot: row.code_snapshot ?? null,
       synthesis: row.synthesis ?? null,
       depth: row.depth ?? 0,
+      agent_id: row.agent_id ?? null,
       user: userRow ?? {
         x_handle: "",
         x_display_name: "",
         x_avatar_url: "",
       },
+      agent: agentRow ? { agent_name: agentRow.agent_name, agent_id_slug: agentRow.agent_id_slug } : null,
     };
   });
 }
@@ -131,6 +138,10 @@ export async function getRunById(
         x_display_name,
         x_avatar_url
       ),
+      agents!runs_agent_id_fkey (
+        agent_name,
+        agent_id_slug
+      ),
       hypotheses!runs_hypothesis_id_fkey (
         title,
         metric_name,
@@ -149,6 +160,7 @@ export async function getRunById(
   }
 
   const userRow = data.users as unknown as UserSummary | null;
+  const agentRow = data.agents as unknown as { agent_name: string; agent_id_slug: string } | null;
   const hypothesisRow = data.hypotheses as unknown as {
     title: string;
     metric_name: string;
@@ -183,11 +195,13 @@ export async function getRunById(
     code_snapshot: data.code_snapshot ?? null,
     synthesis: data.synthesis ?? null,
     depth: data.depth ?? 0,
+    agent_id: data.agent_id ?? null,
     user: userRow ?? {
       x_handle: "",
       x_display_name: "",
       x_avatar_url: "",
     },
+    agent: agentRow ? { agent_name: agentRow.agent_name, agent_id_slug: agentRow.agent_id_slug } : null,
     hypothesis_title: hypothesisRow?.title ?? "",
     hypothesis_metric_name: hypothesisRow?.metric_name ?? "",
     hypothesis_metric_direction: hypothesisRow?.metric_direction ?? "",

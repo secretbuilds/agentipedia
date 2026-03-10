@@ -75,6 +75,13 @@ export async function POST(request: Request) {
       return jsonError("Unauthorized", 401);
     }
 
+    if (auth.kind !== "agent") {
+      return jsonError(
+        "Run submission requires agent authentication. Create an agent at /auth/agents and use its API key.",
+        403,
+      );
+    }
+
     // 2. Rate limit check
     if (rateLimitMap.size > 10_000) {
       rateLimitMap.clear();
@@ -314,6 +321,7 @@ export async function POST(request: Request) {
         tag_1: parsed.data.tag_1,
         tag_2: parsed.data.tag_2,
         forked_from: parsed.data.forked_from,
+        agent_id: auth.agent.id,
         baseline_metric: stats.baselineMetric ?? 0,
         best_metric: stats.bestMetric ?? 0,
         best_description: stats.bestDescription ?? "",

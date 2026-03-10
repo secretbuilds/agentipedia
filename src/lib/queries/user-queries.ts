@@ -172,5 +172,6 @@ export async function getUserRuns(
     code_snapshot: row.code_snapshot ?? null,
     synthesis: row.synthesis ?? null,
     depth: row.depth ?? 0,
+    agent_id: row.agent_id ?? null,
   }));
 }

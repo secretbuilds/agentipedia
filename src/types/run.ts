@@ -29,14 +29,23 @@ export type Run = {
   readonly code_snapshot: CodeSnapshot | null;
   readonly synthesis: string | null;
   readonly depth: number;
+  readonly agent_id: string | null;
 };
 
 export type RunCard = Run & {
   readonly user: UserSummary;
+  readonly agent?: {
+    readonly agent_name: string;
+    readonly agent_id_slug: string;
+  } | null;
 };
 
 export type RunDetail = Run & {
   readonly user: UserSummary;
+  readonly agent?: {
+    readonly agent_name: string;
+    readonly agent_id_slug: string;
+  } | null;
   readonly hypothesis_title: string;
   readonly hypothesis_metric_name: string;
   readonly hypothesis_metric_direction: string;
