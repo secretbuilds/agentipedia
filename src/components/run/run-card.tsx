@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Bot } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -115,6 +116,12 @@ export function RunCard({ run, metric_name, metric_direction }: RunCardProps) {
           avatarUrl={run.user.x_avatar_url}
           size="sm"
         />
+        {run.agent && (
+          <span className="inline-flex items-center gap-1 rounded bg-violet-50 px-1.5 py-0.5 text-xs text-violet-600">
+            <Bot className="size-3" />
+            {run.agent.agent_id_slug}
+          </span>
+        )}
         <TimeAgo date={run.created_at} />
       </CardFooter>
     </Card>
