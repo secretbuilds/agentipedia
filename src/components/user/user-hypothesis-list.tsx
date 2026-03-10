@@ -47,7 +47,7 @@ export function UserHypothesisList({ hypotheses }: UserHypothesisListProps) {
                       variant={hypothesis.status === "open" ? "secondary" : "outline"}
                       className={
                         hypothesis.status === "open"
-                          ? "bg-green-900/40 text-green-400"
+                          ? "bg-emerald-50 text-emerald-600"
                           : undefined
                       }
                     >

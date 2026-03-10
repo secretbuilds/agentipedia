@@ -75,7 +75,7 @@ export default async function HypothesisDetailPage({
           />
         )}
 
-        <Separator className="border-neutral-800" />
+        <Separator className="border-gray-200" />
 
         <div className="flex items-center justify-between">
           <div />

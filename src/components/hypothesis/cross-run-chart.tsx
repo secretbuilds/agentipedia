@@ -42,10 +42,10 @@ function CustomTooltip({
 
   const data = payload[0].payload;
   return (
-    <div className="rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-xs shadow-lg">
-      <p className="font-medium text-neutral-200">@{data.handle}</p>
-      <p className="text-neutral-400">
-        Metric: <span className="font-mono text-neutral-200">{data.best_metric}</span>
+    <div className="rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-xs shadow-lg">
+      <p className="font-medium text-gray-700">@{data.handle}</p>
+      <p className="text-gray-500">
+        Metric: <span className="font-mono text-gray-700">{data.best_metric}</span>
       </p>
     </div>
   );
@@ -72,10 +72,10 @@ export function CrossRunChart({
 
   return (
     <div className="space-y-2">
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">
+      <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500">
         Run Results
       </h2>
-      <div className="rounded-lg border border-neutral-800 bg-neutral-900/50 p-4">
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
         <ResponsiveContainer width="100%" height={300}>
           <ComposedChart data={data} margin={{ top: 10, right: 20, bottom: 10, left: 10 }}>
             <CartesianGrid stroke="#333" strokeDasharray="3 3" />

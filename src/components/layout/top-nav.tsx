@@ -12,11 +12,11 @@ type TopNavUser = {
 
 export function TopNav({ user }: { readonly user: TopNavUser }) {
   return (
-    <nav className="fixed top-0 right-0 left-0 z-50 border-b border-neutral-800 bg-neutral-900/80 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
+    <nav className="fixed top-0 right-0 left-0 z-50 border-b border-gray-200/60 bg-white/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"
-          className="text-lg font-bold tracking-tight text-neutral-50"
+          className="text-lg font-semibold tracking-tight text-gray-900"
         >
           Agentipedia
         </Link>
@@ -25,10 +25,10 @@ export function TopNav({ user }: { readonly user: TopNavUser }) {
           {user && (
             <Button
               render={<Link href="/create-hypothesis" />}
-              variant="secondary"
+              variant="default"
               size="sm"
               nativeButton={false}
-              className="hidden sm:inline-flex"
+              className="hidden rounded-full sm:inline-flex"
             >
               New Hypothesis
             </Button>

@@ -58,7 +58,7 @@ export default async function EditHypothesisPage({ params }: PageProps) {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
-      <h1 className="mb-6 text-2xl font-bold text-neutral-100">
+      <h1 className="mb-6 text-2xl font-bold text-gray-900">
         Edit Hypothesis
       </h1>
       <CreateHypothesisForm initialData={initialData} mode="edit" />

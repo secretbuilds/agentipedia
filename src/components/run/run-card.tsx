@@ -25,11 +25,11 @@ export function RunCard({ run, metric_name, metric_direction }: RunCardProps) {
   const improvementSign = run.improvement_pct >= 0 ? "+" : "";
 
   return (
-    <Card className="transition-colors hover:ring-neutral-700">
+    <Card className="transition-colors hover:ring-gray-200">
       <CardHeader>
         <Link
           href={runUrl(run.id)}
-          className="text-base font-semibold leading-snug text-neutral-100 hover:underline"
+          className="text-base font-semibold leading-snug text-gray-900 hover:underline"
         >
           {run.goal}
         </Link>
@@ -38,23 +38,23 @@ export function RunCard({ run, metric_name, metric_direction }: RunCardProps) {
       <CardContent className="space-y-3">
         {/* Metric improvement */}
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-          <span className="text-neutral-400">
+          <span className="text-gray-500">
             {metric_name}:{" "}
-            <span className="font-mono text-neutral-300">
+            <span className="font-mono text-gray-600">
               {run.baseline_metric}
             </span>
-            <span className="mx-1 text-neutral-600">&rarr;</span>
-            <span className="font-mono text-neutral-100">
+            <span className="mx-1 text-gray-400">&rarr;</span>
+            <span className="font-mono text-gray-900">
               {run.best_metric}
             </span>
           </span>
           <span
             className={
               run.improvement_pct > 0
-                ? "font-medium text-green-400"
+                ? "font-medium text-emerald-600"
                 : run.improvement_pct < 0
                   ? "font-medium text-red-400"
-                  : "text-neutral-500"
+                  : "text-gray-400"
             }
           >
             {improvementSign}
@@ -64,31 +64,31 @@ export function RunCard({ run, metric_name, metric_direction }: RunCardProps) {
 
         {/* Experiment status breakdown */}
         <div className="flex flex-wrap items-center gap-3 text-xs">
-          <span className="text-neutral-500">
+          <span className="text-gray-400">
             {run.num_experiments} experiments:
           </span>
           {run.num_kept > 0 && (
             <span className="inline-flex items-center gap-1">
               <StatusDot status="keep" />
-              <span className="text-neutral-400">{run.num_kept}</span>
+              <span className="text-gray-500">{run.num_kept}</span>
             </span>
           )}
           {run.num_discarded > 0 && (
             <span className="inline-flex items-center gap-1">
               <StatusDot status="discard" />
-              <span className="text-neutral-400">{run.num_discarded}</span>
+              <span className="text-gray-500">{run.num_discarded}</span>
             </span>
           )}
           {run.num_crashed > 0 && (
             <span className="inline-flex items-center gap-1">
               <StatusDot status="crash" />
-              <span className="text-neutral-400">{run.num_crashed}</span>
+              <span className="text-gray-500">{run.num_crashed}</span>
             </span>
           )}
         </div>
 
         {/* Context line */}
-        <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-neutral-500">
+        <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-gray-400">
           {run.hardware && <span>{run.hardware}</span>}
           {run.model_size && <span>{run.model_size}</span>}
           {run.time_budget && <span>{run.time_budget}</span>}
@@ -97,11 +97,11 @@ export function RunCard({ run, metric_name, metric_direction }: RunCardProps) {
         <TagList tag1={run.tag_1} tag2={run.tag_2} />
 
         {run.forked_from && (
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-gray-400">
             Forked from{" "}
             <Link
               href={runUrl(run.forked_from)}
-              className="text-neutral-400 hover:text-neutral-200 hover:underline"
+              className="text-gray-500 hover:text-gray-800 hover:underline"
             >
               {run.forked_from.slice(0, 8)}...
             </Link>

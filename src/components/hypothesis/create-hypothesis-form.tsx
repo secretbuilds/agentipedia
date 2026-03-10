@@ -225,7 +225,7 @@ export function CreateHypothesisForm({
             {DIRECTION_OPTIONS.map((opt) => (
               <label
                 key={opt.value}
-                className="flex cursor-pointer items-center gap-2 text-sm text-neutral-300"
+                className="flex cursor-pointer items-center gap-2 text-sm text-gray-600"
               >
                 <input
                   type="radio"
@@ -233,7 +233,7 @@ export function CreateHypothesisForm({
                   value={opt.value}
                   checked={metricDirection === opt.value}
                   onChange={() => setMetricDirection(opt.value)}
-                  className="accent-neutral-50"
+                  className="accent-gray-900"
                 />
                 {opt.label}
               </label>

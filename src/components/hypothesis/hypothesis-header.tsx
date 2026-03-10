@@ -40,11 +40,11 @@ export function HypothesisHeader({
         )}
       </div>
 
-      <h1 className="text-2xl font-bold leading-tight text-neutral-100 sm:text-3xl">
+      <h1 className="text-2xl font-bold leading-tight text-gray-900 sm:text-3xl">
         {hypothesis.title}
       </h1>
 
-      <p className="whitespace-pre-wrap text-sm leading-relaxed text-neutral-400">
+      <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-500">
         {hypothesis.description}
       </p>
 

@@ -15,21 +15,21 @@ export function HypothesisChallengeInfo({
       : "Higher is better";
 
   return (
-    <div className="space-y-4 rounded-lg border border-neutral-800 bg-neutral-900/50 p-4">
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">
+    <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
+      <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500">
         Challenge Info
       </h2>
 
       <dl className="grid gap-3 text-sm sm:grid-cols-2">
         {/* Dataset */}
         <div>
-          <dt className="text-neutral-500">Dataset</dt>
+          <dt className="text-gray-400">Dataset</dt>
           <dd className="mt-0.5">
             <a
               href={hypothesis.dataset_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-neutral-200 hover:text-neutral-50 hover:underline"
+              className="inline-flex items-center gap-1 text-gray-700 hover:text-gray-900 hover:underline"
             >
               {hypothesis.dataset_name}
               <ExternalLink className="size-3" />
@@ -39,18 +39,18 @@ export function HypothesisChallengeInfo({
 
         {/* Metric */}
         <div>
-          <dt className="text-neutral-500">Metric</dt>
-          <dd className="mt-0.5 text-neutral-200">
+          <dt className="text-gray-400">Metric</dt>
+          <dd className="mt-0.5 text-gray-700">
             {hypothesis.metric_name}{" "}
-            <span className="text-neutral-500">({directionLabel})</span>
+            <span className="text-gray-400">({directionLabel})</span>
           </dd>
         </div>
 
         {/* Baseline */}
         {hypothesis.baseline_to_beat != null && (
           <div>
-            <dt className="text-neutral-500">Baseline to Beat</dt>
-            <dd className="mt-0.5 font-mono text-neutral-200">
+            <dt className="text-gray-400">Baseline to Beat</dt>
+            <dd className="mt-0.5 font-mono text-gray-700">
               {hypothesis.baseline_to_beat}
             </dd>
           </div>
@@ -59,13 +59,13 @@ export function HypothesisChallengeInfo({
         {/* Starter Code */}
         {hypothesis.starter_code_url && (
           <div>
-            <dt className="text-neutral-500">Starter Code</dt>
+            <dt className="text-gray-400">Starter Code</dt>
             <dd className="mt-0.5">
               <a
                 href={hypothesis.starter_code_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-neutral-200 hover:text-neutral-50 hover:underline"
+                className="inline-flex items-center gap-1 text-gray-700 hover:text-gray-900 hover:underline"
               >
                 View code
                 <ExternalLink className="size-3" />
@@ -77,8 +77,8 @@ export function HypothesisChallengeInfo({
         {/* Hardware */}
         {hypothesis.hardware_recommendation && (
           <div>
-            <dt className="text-neutral-500">Hardware Recommendation</dt>
-            <dd className="mt-0.5 text-neutral-200">
+            <dt className="text-gray-400">Hardware Recommendation</dt>
+            <dd className="mt-0.5 text-gray-700">
               {hypothesis.hardware_recommendation}
             </dd>
           </div>

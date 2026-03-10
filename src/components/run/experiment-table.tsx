@@ -67,7 +67,7 @@ export function ExperimentTable({
         accessorKey: "sequence",
         header: "#",
         cell: ({ getValue }) => (
-          <span className="font-mono text-neutral-400">
+          <span className="font-mono text-gray-500">
             {getValue<number>()}
           </span>
         ),
@@ -77,7 +77,7 @@ export function ExperimentTable({
         accessorKey: "commit_hash",
         header: "Commit",
         cell: ({ getValue }) => (
-          <span className="font-mono text-xs text-neutral-300">
+          <span className="font-mono text-xs text-gray-600">
             {getValue<string>().slice(0, 8)}
           </span>
         ),
@@ -87,7 +87,7 @@ export function ExperimentTable({
         accessorKey: "metric_value",
         header: metricName,
         cell: ({ getValue }) => (
-          <span className="font-mono text-sm text-neutral-200">
+          <span className="font-mono text-sm text-gray-700">
             {getValue<number>().toFixed(4)}
           </span>
         ),
@@ -97,7 +97,7 @@ export function ExperimentTable({
         accessorKey: "memory_gb",
         header: "Memory (GB)",
         cell: ({ getValue }) => (
-          <span className="font-mono text-sm text-neutral-400">
+          <span className="font-mono text-sm text-gray-500">
             {getValue<number>().toFixed(1)}
           </span>
         ),
@@ -132,7 +132,7 @@ export function ExperimentTable({
         accessorKey: "description",
         header: "Description",
         cell: ({ getValue }) => (
-          <span className="max-w-[300px] truncate text-sm text-neutral-400">
+          <span className="max-w-[300px] truncate text-sm text-gray-500">
             {getValue<string>()}
           </span>
         ),
@@ -170,16 +170,16 @@ export function ExperimentTable({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-neutral-100">Experiments</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Experiments</h2>
         <div className="flex items-center gap-2">
-          <label htmlFor="status-filter" className="text-xs text-neutral-400">
+          <label htmlFor="status-filter" className="text-xs text-gray-500">
             Filter:
           </label>
           <select
             id="status-filter"
             value={statusFilter}
             onChange={(e) => handleStatusChange(e.target.value)}
-            className="rounded-md border border-neutral-700 bg-neutral-900 px-2 py-1 text-xs text-neutral-200 outline-none focus:border-neutral-500"
+            className="rounded-md border border-gray-300 bg-gray-50 px-2 py-1 text-xs text-gray-700 outline-none focus:border-gray-400"
           >
             <option value="all">All</option>
             {EXPERIMENT_STATUSES.map((status) => (
@@ -191,16 +191,16 @@ export function ExperimentTable({
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-neutral-800">
+      <div className="overflow-x-auto rounded-lg border border-gray-200">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="border-neutral-800">
+              <TableRow key={headerGroup.id} className="border-gray-200">
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
                     className={cn(
-                      "text-neutral-400",
+                      "text-gray-500",
                       header.column.getCanSort() && "cursor-pointer select-none",
                     )}
                     onClick={header.column.getToggleSortingHandler()}
@@ -225,8 +225,8 @@ export function ExperimentTable({
                 <TableRow
                   key={row.id}
                   className={cn(
-                    "border-neutral-800",
-                    isBest && "bg-green-950/20",
+                    "border-gray-200",
+                    isBest && "bg-emerald-50",
                   )}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -244,7 +244,7 @@ export function ExperimentTable({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="text-center text-neutral-500"
+                  className="text-center text-gray-400"
                 >
                   No experiments match the current filter.
                 </TableCell>

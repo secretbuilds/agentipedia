@@ -11,13 +11,13 @@ export function ForkLineage({ forkedFrom }: ForkLineageProps) {
   }
 
   return (
-    <div className="flex items-center gap-2 text-sm text-neutral-400">
+    <div className="flex items-center gap-2 text-sm text-gray-500">
       <GitFork className="size-4" />
       <span>
         Forked from{" "}
         <Link
           href={`/runs/${forkedFrom}`}
-          className="text-neutral-300 underline underline-offset-2 transition-colors hover:text-neutral-100"
+          className="text-gray-600 underline underline-offset-2 transition-colors hover:text-gray-900"
         >
           run {forkedFrom.slice(0, 8)}
         </Link>

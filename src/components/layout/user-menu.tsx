@@ -43,7 +43,7 @@ function AvatarImage({
     />
   ) : (
     <span
-      className="flex items-center justify-center rounded-full bg-neutral-700 text-xs font-medium text-neutral-200"
+      className="flex items-center justify-center rounded-full bg-gray-100 text-xs font-medium text-gray-600"
       style={{ width: size, height: size }}
     >
       {getInitials(user.x_display_name)}
@@ -56,7 +56,7 @@ export function UserMenu({ user }: { readonly user: UserMenuUser }) {
     return (
       <Link
         href="/auth/login"
-        className="rounded-lg bg-neutral-800 px-3 py-1.5 text-sm font-medium text-neutral-200 transition-colors hover:bg-neutral-700"
+        className="rounded-full bg-gray-900 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-gray-800"
       >
         Sign in
       </Link>
@@ -75,7 +75,7 @@ export function UserMenu({ user }: { readonly user: UserMenuUser }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="flex items-center gap-2 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-neutral-500"
+        className="flex items-center gap-2 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-gray-400"
         aria-label="User menu"
       >
         <AvatarImage user={user} size={32} />

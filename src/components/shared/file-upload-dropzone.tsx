@@ -78,8 +78,8 @@ export function FileUploadDropzone({
         className={cn(
           "flex w-full cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed px-6 py-8 text-center transition-colors",
           isDragging
-            ? "border-neutral-400 bg-neutral-800/60"
-            : "border-neutral-700 bg-neutral-900 hover:border-neutral-500",
+            ? "border-gray-500 bg-gray-100/60"
+            : "border-gray-300 bg-gray-50 hover:border-gray-400",
           error && "border-red-500/50",
         )}
         onClick={() => inputRef.current?.click()}
@@ -87,11 +87,11 @@ export function FileUploadDropzone({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <Upload className="size-6 text-neutral-500" />
+        <Upload className="size-6 text-gray-400" />
         {fileName ? (
-          <span className="text-sm text-neutral-200">{fileName}</span>
+          <span className="text-sm text-gray-700">{fileName}</span>
         ) : (
-          <span className="text-sm text-neutral-400">{label}</span>
+          <span className="text-sm text-gray-500">{label}</span>
         )}
       </button>
       <input

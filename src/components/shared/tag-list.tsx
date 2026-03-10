@@ -15,7 +15,7 @@ export function TagList({ tag1, tag2 }: TagListProps) {
   return (
     <div className="flex flex-wrap gap-1">
       {tags.map((tag) => (
-        <Badge key={tag} variant="outline" className="text-xs text-neutral-300">
+        <Badge key={tag} variant="outline" className="text-xs text-gray-600">
           {tag}
         </Badge>
       ))}

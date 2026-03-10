@@ -16,8 +16,8 @@ export function MetricDisplay({
 
   return (
     <span className="inline-flex items-center gap-1 font-mono text-sm">
-      <span className={cn("font-medium", "text-green-400")}>{arrow}</span>
-      <span className="text-neutral-200">{value.toFixed(decimals)}</span>
+      <span className={cn("font-medium", "text-emerald-600")}>{arrow}</span>
+      <span className="text-gray-700">{value.toFixed(decimals)}</span>
     </span>
   );
 }

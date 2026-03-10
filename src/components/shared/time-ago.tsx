@@ -9,7 +9,7 @@ export function TimeAgo({ date }: { readonly date: string }) {
   return (
     <time
       dateTime={parsed.toISOString()}
-      className="text-sm text-neutral-400"
+      className="text-sm text-gray-500"
       title={parsed.toLocaleString()}
     >
       {label}

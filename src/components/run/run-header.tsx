@@ -17,11 +17,11 @@ export function RunHeader({ run }: RunHeaderProps) {
       <div className="space-y-1">
         <Link
           href={`/hypotheses/${run.hypothesis_id}`}
-          className="text-sm text-neutral-400 transition-colors hover:text-neutral-200"
+          className="text-sm text-gray-500 transition-colors hover:text-gray-800"
         >
           {run.hypothesis_title}
         </Link>
-        <h1 className="text-2xl font-bold text-neutral-100">{run.goal}</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{run.goal}</h1>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">

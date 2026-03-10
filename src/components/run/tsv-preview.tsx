@@ -61,32 +61,32 @@ export function TsvPreview({
   const showEllipsis = rows.length > 10;
 
   return (
-    <div className="space-y-4 rounded-lg border border-neutral-800 bg-neutral-900/50 p-4">
+    <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
       <div className="space-y-3">
-        <p className="text-sm font-medium text-neutral-200">TSV Summary</p>
+        <p className="text-sm font-medium text-gray-700">TSV Summary</p>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div className="rounded-md bg-neutral-800/50 p-3">
-            <p className="text-xs text-neutral-400">Baseline</p>
-            <p className="font-mono text-sm text-neutral-100">
+          <div className="rounded-md bg-gray-100 p-3">
+            <p className="text-xs text-gray-500">Baseline</p>
+            <p className="font-mono text-sm text-gray-900">
               {stats.baseline_metric.toFixed(4)}
             </p>
           </div>
-          <div className="rounded-md bg-neutral-800/50 p-3">
-            <p className="text-xs text-neutral-400">Best</p>
-            <p className="font-mono text-sm text-neutral-100">
+          <div className="rounded-md bg-gray-100 p-3">
+            <p className="text-xs text-gray-500">Best</p>
+            <p className="font-mono text-sm text-gray-900">
               {stats.best_metric.toFixed(4)}
             </p>
           </div>
-          <div className="rounded-md bg-neutral-800/50 p-3">
-            <p className="text-xs text-neutral-400">Improvement</p>
-            <p className="font-mono text-sm text-green-400">
+          <div className="rounded-md bg-gray-100 p-3">
+            <p className="text-xs text-gray-500">Improvement</p>
+            <p className="font-mono text-sm text-emerald-600">
               {formatPct(stats.improvement_pct)}
             </p>
           </div>
-          <div className="rounded-md bg-neutral-800/50 p-3">
-            <p className="text-xs text-neutral-400">Experiments</p>
-            <p className="font-mono text-sm text-neutral-100">
+          <div className="rounded-md bg-gray-100 p-3">
+            <p className="text-xs text-gray-500">Experiments</p>
+            <p className="font-mono text-sm text-gray-900">
               {stats.num_experiments}
             </p>
           </div>
@@ -94,29 +94,29 @@ export function TsvPreview({
 
         <div className="flex flex-wrap gap-4 text-sm">
           <StatusDot status="keep" />
-          <span className="text-neutral-400">{stats.num_kept}</span>
+          <span className="text-gray-500">{stats.num_kept}</span>
           <StatusDot status="discard" />
-          <span className="text-neutral-400">{stats.num_discarded}</span>
+          <span className="text-gray-500">{stats.num_discarded}</span>
           <StatusDot status="crash" />
-          <span className="text-neutral-400">{stats.num_crashed}</span>
+          <span className="text-gray-500">{stats.num_crashed}</span>
         </div>
       </div>
 
       <div className="space-y-2">
-        <p className="text-sm font-medium text-neutral-200">
+        <p className="text-sm font-medium text-gray-700">
           Preview ({rows.length} rows)
         </p>
-        <div className="overflow-x-auto rounded-md border border-neutral-800">
+        <div className="overflow-x-auto rounded-md border border-gray-200">
           <Table>
             <TableHeader>
-              <TableRow className="border-neutral-800">
-                <TableHead className="text-neutral-400">commit</TableHead>
-                <TableHead className="text-neutral-400">
+              <TableRow className="border-gray-200">
+                <TableHead className="text-gray-500">commit</TableHead>
+                <TableHead className="text-gray-500">
                   {metricColumnName || "metric"}
                 </TableHead>
-                <TableHead className="text-neutral-400">memory_gb</TableHead>
-                <TableHead className="text-neutral-400">status</TableHead>
-                <TableHead className="text-neutral-400">description</TableHead>
+                <TableHead className="text-gray-500">memory_gb</TableHead>
+                <TableHead className="text-gray-500">status</TableHead>
+                <TableHead className="text-gray-500">description</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -126,33 +126,33 @@ export function TsvPreview({
                   <TableRow
                     key={`${row.commit}-${idx}`}
                     className={cn(
-                      "border-neutral-800",
-                      isEllipsisPoint && "border-t-2 border-t-neutral-700",
+                      "border-gray-200",
+                      isEllipsisPoint && "border-t-2 border-t-gray-300",
                     )}
                   >
-                    <TableCell className="font-mono text-xs text-neutral-300">
+                    <TableCell className="font-mono text-xs text-gray-600">
                       {row.commit.slice(0, 8)}
                     </TableCell>
-                    <TableCell className="font-mono text-xs text-neutral-200">
+                    <TableCell className="font-mono text-xs text-gray-700">
                       {row.metric_value.toFixed(4)}
                     </TableCell>
-                    <TableCell className="font-mono text-xs text-neutral-400">
+                    <TableCell className="font-mono text-xs text-gray-500">
                       {row.memory_gb.toFixed(1)}
                     </TableCell>
                     <TableCell>
                       <StatusDot status={row.status} />
                     </TableCell>
-                    <TableCell className="max-w-[200px] truncate text-xs text-neutral-400">
+                    <TableCell className="max-w-[200px] truncate text-xs text-gray-500">
                       {row.description}
                     </TableCell>
                   </TableRow>
                 );
               })}
               {showEllipsis && (
-                <TableRow className="border-neutral-800">
+                <TableRow className="border-gray-200">
                   <TableCell
                     colSpan={5}
-                    className="text-center text-xs text-neutral-500"
+                    className="text-center text-xs text-gray-400"
                   >
                     ... {rows.length - 10} rows hidden ...
                   </TableCell>

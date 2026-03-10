@@ -31,7 +31,7 @@ type ChartPoint = {
 
 const STATUS_FILL: Record<string, string> = {
   keep: "#4ade80",
-  discard: "#737373",
+  discard: "#9ca3af",
   crash: "#f87171",
 };
 
@@ -49,18 +49,18 @@ function CustomTooltip({
   const data = payload[0].payload;
 
   return (
-    <div className="rounded-lg border border-neutral-700 bg-neutral-900 p-3 text-xs shadow-lg">
-      <p className="font-mono text-neutral-200">
+    <div className="rounded-lg border border-gray-300 bg-white p-3 text-xs shadow-lg">
+      <p className="font-mono text-gray-700">
         {data.commit_hash.slice(0, 8)}
       </p>
-      <p className="text-neutral-400">{data.description}</p>
-      <p className="mt-1 text-neutral-200">
+      <p className="text-gray-500">{data.description}</p>
+      <p className="mt-1 text-gray-700">
         Metric: <span className="font-mono">{data.metric_value.toFixed(4)}</span>
       </p>
-      <p className="text-neutral-400">
+      <p className="text-gray-500">
         Memory: <span className="font-mono">{data.memory_gb.toFixed(1)} GB</span>
       </p>
-      <p className="capitalize text-neutral-400">
+      <p className="capitalize text-gray-500">
         Status: <span style={{ color: STATUS_FILL[data.status] }}>{data.status}</span>
       </p>
     </div>
@@ -103,37 +103,37 @@ export function ProgressionChart({
 
   return (
     <div className="space-y-2">
-      <h2 className="text-lg font-semibold text-neutral-100">
+      <h2 className="text-lg font-semibold text-gray-900">
         Metric Progression
       </h2>
-      <div className="rounded-lg border border-neutral-800 bg-neutral-900/50 p-4">
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
         <ResponsiveContainer width="100%" height={350}>
           <ComposedChart
             data={allPoints}
             margin={{ top: 10, right: 20, bottom: 20, left: 20 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#262626" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis
               dataKey="sequence"
-              stroke="#525252"
-              tick={{ fill: "#a3a3a3", fontSize: 12 }}
+              stroke="#d1d5db"
+              tick={{ fill: "#6b7280", fontSize: 12 }}
               label={{
                 value: "Experiment #",
                 position: "insideBottom",
                 offset: -10,
-                fill: "#737373",
+                fill: "#9ca3af",
                 fontSize: 12,
               }}
             />
             <YAxis
-              stroke="#525252"
-              tick={{ fill: "#a3a3a3", fontSize: 12 }}
+              stroke="#d1d5db"
+              tick={{ fill: "#6b7280", fontSize: 12 }}
               label={{
                 value: metricName,
                 angle: -90,
                 position: "insideLeft",
                 offset: -5,
-                fill: "#737373",
+                fill: "#9ca3af",
                 fontSize: 12,
               }}
             />
@@ -142,11 +142,11 @@ export function ProgressionChart({
             {baseline !== null && (
               <ReferenceLine
                 y={baseline}
-                stroke="#737373"
+                stroke="#9ca3af"
                 strokeDasharray="6 3"
                 label={{
                   value: "baseline",
-                  fill: "#737373",
+                  fill: "#9ca3af",
                   fontSize: 11,
                   position: "insideTopRight",
                 }}
@@ -171,14 +171,14 @@ export function ProgressionChart({
                 const cx = props.cx ?? 0;
                 const cy = props.cy ?? 0;
                 const payload = props.payload;
-                const fill = payload ? (STATUS_FILL[payload.status] ?? "#737373") : "#737373";
+                const fill = payload ? (STATUS_FILL[payload.status] ?? "#9ca3af") : "#9ca3af";
                 return (
                   <circle
                     cx={cx}
                     cy={cy}
                     r={5}
                     fill={fill}
-                    stroke="#171717"
+                    stroke="#ffffff"
                     strokeWidth={1.5}
                   />
                 );

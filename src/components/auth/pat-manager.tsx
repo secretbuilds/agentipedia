@@ -221,7 +221,7 @@ export function PatManager({ initialTokens }: PatManagerProps) {
                         )}
                       </Button>
                     </div>
-                    <p className="text-xs text-amber-400">
+                    <p className="text-xs text-amber-600">
                       Make sure to copy your token. You will not be able to see it again.
                     </p>
                   </div>
@@ -284,7 +284,7 @@ export function PatManager({ initialTokens }: PatManagerProps) {
                       <Badge
                         variant={isRevoked ? "destructive" : "secondary"}
                         className={cn(
-                          !isRevoked && "bg-green-900/40 text-green-400",
+                          !isRevoked && "bg-emerald-50 text-emerald-600",
                         )}
                       >
                         {isRevoked ? "Revoked" : "Active"}

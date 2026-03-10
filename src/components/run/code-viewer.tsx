@@ -55,12 +55,12 @@ export function CodeViewer({ code, filename }: CodeViewerProps) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-neutral-100">Code</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Code</h2>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-neutral-400">{filename}</span>
+          <span className="text-xs text-gray-500">{filename}</span>
           <Button variant="ghost" size="icon-xs" onClick={handleCopy}>
             {copied ? (
-              <Check className="size-3.5 text-green-400" />
+              <Check className="size-3.5 text-emerald-600" />
             ) : (
               <Copy className="size-3.5" />
             )}
@@ -70,7 +70,7 @@ export function CodeViewer({ code, filename }: CodeViewerProps) {
           </Button>
         </div>
       </div>
-      <div className="overflow-x-auto rounded-lg border border-neutral-800">
+      <div className="overflow-x-auto rounded-lg border border-gray-200">
         <SyntaxHighlighter
           language={language}
           style={vscDarkPlus}

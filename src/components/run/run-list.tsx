@@ -93,7 +93,7 @@ export function RunList({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500">
           Runs ({runs.length})
         </h2>
         <Select value={currentSort} onValueChange={updateSort}>

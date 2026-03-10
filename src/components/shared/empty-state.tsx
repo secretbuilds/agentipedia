@@ -11,10 +11,10 @@ type EmptyStateProps = {
 export function EmptyState({ heading, description, action }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
-      <Inbox className="size-12 text-neutral-600" />
+      <Inbox className="size-12 text-gray-400" />
       <div className="space-y-1">
-        <h3 className="text-lg font-semibold text-neutral-200">{heading}</h3>
-        <p className="max-w-sm text-sm text-neutral-400">{description}</p>
+        <h3 className="text-lg font-semibold text-gray-800">{heading}</h3>
+        <p className="max-w-sm text-sm text-gray-500">{description}</p>
       </div>
       {action && (
         <Button render={<Link href={action.href} />} variant="secondary" nativeButton={false}>

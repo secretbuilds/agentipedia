@@ -24,7 +24,7 @@ export function UserAvatar({
   return (
     <Link
       href={`/users/${handle}`}
-      className="inline-flex items-center gap-2 text-sm text-neutral-300 transition-colors hover:text-neutral-100"
+      className="inline-flex items-center gap-2 text-sm text-gray-600 transition-colors hover:text-gray-900"
     >
       <Image
         src={avatarUrl}

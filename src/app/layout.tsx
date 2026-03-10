@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Geist } from "next/font/google";
+import { Geist, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { AppNav } from "@/components/layout/app-nav";
@@ -7,9 +7,10 @@ import { Toaster } from "@/components/ui/sonner";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
-const inter = Inter({
+const instrumentSerif = Instrument_Serif({
+  weight: "400",
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-serif",
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -28,12 +29,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn("dark", "font-sans", geist.variable)}>
-      <body
-        className={`${inter.variable} ${jetbrainsMono.variable} font-sans min-h-screen bg-neutral-950 text-neutral-50 antialiased`}
-      >
+    <html
+      lang="en"
+      className={cn(
+        geist.variable,
+        instrumentSerif.variable,
+        jetbrainsMono.variable,
+      )}
+    >
+      <body className="min-h-screen bg-white text-gray-900 antialiased">
         <AppNav />
-        <main className="pt-14">{children}</main>
+        <main className="pt-16">{children}</main>
         <Toaster />
       </body>
     </html>

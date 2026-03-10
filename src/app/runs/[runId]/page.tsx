@@ -49,7 +49,7 @@ export default async function RunDetailPage({ params }: PageProps) {
     <div className="mx-auto max-w-5xl space-y-8 px-4 py-8">
       <RunHeader run={run} />
 
-      <Separator className="bg-neutral-800" />
+      <Separator className="bg-gray-200" />
 
       <RunStats run={run} />
 

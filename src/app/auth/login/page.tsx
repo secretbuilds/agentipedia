@@ -25,25 +25,25 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <div className="w-full max-w-sm space-y-6 rounded-xl border border-neutral-800 bg-neutral-900 p-8">
+      <div className="w-full max-w-sm space-y-6 rounded-xl border border-gray-200 bg-white p-8">
         <div className="space-y-2 text-center">
           <h1 className="text-2xl font-bold tracking-tight">
             Sign in to Agentipedia
           </h1>
-          <p className="text-sm text-neutral-400">
+          <p className="text-sm text-gray-500">
             Connect your X account to get started
           </p>
         </div>
 
         {error && (
-          <div className="rounded-lg border border-red-800 bg-red-950 px-4 py-3 text-sm text-red-300">
+          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
             {error}
           </div>
         )}
 
         <button
           onClick={handleSignIn}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-black transition-colors hover:bg-neutral-200"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800"
         >
           <svg
             viewBox="0 0 24 24"
