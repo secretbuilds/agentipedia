@@ -1,4 +1,5 @@
 import pytest
+
 from agentipedia.config import Config
 
 

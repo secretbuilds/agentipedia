@@ -15,10 +15,14 @@ def runner():
 def auth_env(tmp_path):
     config_dir = tmp_path / ".agentipedia"
     config_dir.mkdir()
-    (config_dir / "config.json").write_text(json.dumps({
-        "api_key": "agp_testcli",
-        "server_url": "https://test.agentipedia.ai",
-    }))
+    (config_dir / "config.json").write_text(
+        json.dumps(
+            {
+                "api_key": "agp_testcli",
+                "server_url": "https://test.agentipedia.ai",
+            }
+        )
+    )
     return {"AGENTIPEDIA_CONFIG_DIR": str(config_dir)}
 
 
@@ -53,11 +57,17 @@ class TestHypotheses:
             url="https://test.agentipedia.ai/api/hypotheses",
             json={
                 "items": [
-                    {"id": "h1abcdef-1234-5678-9abc-def012345678", "title": "CIFAR-10",
-                     "domain": "computer_vision", "metric_name": "accuracy",
-                     "metric_direction": "higher_is_better", "status": "open", "run_count": 5,
-                     "created_at": "2026-01-01T00:00:00Z",
-                     "user": {"x_handle": "test", "x_display_name": "Test", "x_avatar_url": ""}},
+                    {
+                        "id": "h1abcdef-1234-5678-9abc-def012345678",
+                        "title": "CIFAR-10",
+                        "domain": "computer_vision",
+                        "metric_name": "accuracy",
+                        "metric_direction": "higher_is_better",
+                        "status": "open",
+                        "run_count": 5,
+                        "created_at": "2026-01-01T00:00:00Z",
+                        "user": {"x_handle": "test", "x_display_name": "Test", "x_avatar_url": ""},
+                    },
                 ],
                 "next_cursor": None,
                 "has_more": False,
@@ -75,11 +85,22 @@ class TestLeaves:
             json={
                 "success": True,
                 "data": [
-                    {"id": "r1abcdef-1234-5678-9abc-def012345678", "hypothesis_id": "h1",
-                     "user_id": "u1", "forked_from": None, "best_metric": 0.74,
-                     "synthesis": None, "created_at": "2026-01-01T00:00:00Z",
-                     "goal": "Cosine LR", "depth": 2,
-                     "user": {"x_handle": "alice", "x_display_name": "Alice", "x_avatar_url": ""}},
+                    {
+                        "id": "r1abcdef-1234-5678-9abc-def012345678",
+                        "hypothesis_id": "h1",
+                        "user_id": "u1",
+                        "forked_from": None,
+                        "best_metric": 0.74,
+                        "synthesis": None,
+                        "created_at": "2026-01-01T00:00:00Z",
+                        "goal": "Cosine LR",
+                        "depth": 2,
+                        "user": {
+                            "x_handle": "alice",
+                            "x_display_name": "Alice",
+                            "x_avatar_url": "",
+                        },
+                    },
                 ],
             },
         )
@@ -95,10 +116,24 @@ class TestLineage:
             json={
                 "success": True,
                 "data": [
-                    {"id": "r1", "hypothesis_id": "h1", "forked_from": None,
-                     "best_metric": 0.68, "synthesis": None, "created_at": "2026-01-01", "depth": 0},
-                    {"id": "r2", "hypothesis_id": "h1", "forked_from": "r1",
-                     "best_metric": 0.74, "synthesis": None, "created_at": "2026-01-02", "depth": 1},
+                    {
+                        "id": "r1",
+                        "hypothesis_id": "h1",
+                        "forked_from": None,
+                        "best_metric": 0.68,
+                        "synthesis": None,
+                        "created_at": "2026-01-01",
+                        "depth": 0,
+                    },
+                    {
+                        "id": "r2",
+                        "hypothesis_id": "h1",
+                        "forked_from": "r1",
+                        "best_metric": 0.74,
+                        "synthesis": None,
+                        "created_at": "2026-01-02",
+                        "depth": 1,
+                    },
                 ],
             },
         )

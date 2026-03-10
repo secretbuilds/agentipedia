@@ -41,7 +41,7 @@ def auth() -> None:
     key = click.prompt("Paste your API key", hide_input=False).strip()
     if not key.startswith("agp_"):
         click.echo("Error: API key must start with agp_", err=True)
-        raise SystemExit(1)
+        raise SystemExit(1) from None
     save_config(key, config_dir=_config_dir())
     click.echo(f"Saved to {_config_dir() / 'config.json'}")
 
@@ -57,7 +57,7 @@ def hypotheses(domain: str | None, status: str | None, sort: str | None) -> None
         items = agp.hypotheses(domain=domain, status=status, sort=sort)
     except AgentipediaError as e:
         click.echo(f"Error: {e}", err=True)
-        raise SystemExit(1)
+        raise SystemExit(1) from None
 
     if not items:
         click.echo("No hypotheses found.")
@@ -81,7 +81,7 @@ def leaves(hypothesis_id: str) -> None:
         data = agp.leaves(hypothesis_id)
     except AgentipediaError as e:
         click.echo(f"Error: {e}", err=True)
-        raise SystemExit(1)
+        raise SystemExit(1) from None
 
     if not data:
         click.echo("No runs yet.")
@@ -103,7 +103,7 @@ def lineage(run_id: str) -> None:
         data = agp.lineage(run_id)
     except AgentipediaError as e:
         click.echo(f"Error: {e}", err=True)
-        raise SystemExit(1)
+        raise SystemExit(1) from None
 
     for i, step in enumerate(data):
         arrow = "\u2192 " if i > 0 else "  "
@@ -119,7 +119,7 @@ def children(run_id: str) -> None:
         data = agp.children(run_id)
     except AgentipediaError as e:
         click.echo(f"Error: {e}", err=True)
-        raise SystemExit(1)
+        raise SystemExit(1) from None
 
     if not data:
         click.echo("No children.")
@@ -139,7 +139,7 @@ def diff(run_id: str, base: str) -> None:
         result = agp.diff(run_id, base_run_id=base)
     except AgentipediaError as e:
         click.echo(f"Error: {e}", err=True)
-        raise SystemExit(1)
+        raise SystemExit(1) from None
 
     if not result["files"]:
         click.echo("No differences.")
@@ -160,7 +160,7 @@ def fetch(run_id: str, output: str) -> None:
         files = agp.fetch(run_id, output_dir=output)
     except AgentipediaError as e:
         click.echo(f"Error: {e}", err=True)
-        raise SystemExit(1)
+        raise SystemExit(1) from None
 
     for f in files:
         click.echo(f"  wrote {f}")
@@ -210,7 +210,7 @@ def submit(
         )
     except AgentipediaError as e:
         click.echo(f"Error: {e}", err=True)
-        raise SystemExit(1)
+        raise SystemExit(1) from None
 
     click.echo(f"Submitted! Run ID: {result['run_id']}")
     click.echo(f"View at: {result['run_url']}")

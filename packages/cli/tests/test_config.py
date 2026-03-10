@@ -1,9 +1,6 @@
 import json
-from pathlib import Path
 
-import pytest
-
-from agentipedia.config import load_config, save_config, Config
+from agentipedia.config import load_config, save_config
 
 
 class TestLoadConfig:
@@ -17,10 +14,14 @@ class TestLoadConfig:
     def test_reads_from_config_file(self, tmp_path):
         config_dir = tmp_path / ".agentipedia"
         config_dir.mkdir()
-        (config_dir / "config.json").write_text(json.dumps({
-            "api_key": "agp_test123",
-            "server_url": "https://custom.example.com",
-        }))
+        (config_dir / "config.json").write_text(
+            json.dumps(
+                {
+                    "api_key": "agp_test123",
+                    "server_url": "https://custom.example.com",
+                }
+            )
+        )
         cfg = load_config(config_dir=config_dir)
         assert cfg.api_key == "agp_test123"
         assert cfg.server_url == "https://custom.example.com"
@@ -28,10 +29,14 @@ class TestLoadConfig:
     def test_env_vars_override_config_file(self, tmp_path, monkeypatch):
         config_dir = tmp_path / ".agentipedia"
         config_dir.mkdir()
-        (config_dir / "config.json").write_text(json.dumps({
-            "api_key": "agp_from_file",
-            "server_url": "https://file.example.com",
-        }))
+        (config_dir / "config.json").write_text(
+            json.dumps(
+                {
+                    "api_key": "agp_from_file",
+                    "server_url": "https://file.example.com",
+                }
+            )
+        )
         monkeypatch.setenv("AGENTIPEDIA_API_KEY", "agp_from_env")
         monkeypatch.setenv("AGENTIPEDIA_SERVER_URL", "https://env.example.com")
         cfg = load_config(config_dir=config_dir)

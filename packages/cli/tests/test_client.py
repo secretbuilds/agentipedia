@@ -1,4 +1,5 @@
 import pytest
+
 from agentipedia.client import AgentipediaClient, AgentipediaError
 
 

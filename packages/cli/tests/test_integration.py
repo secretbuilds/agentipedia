@@ -1,7 +1,5 @@
 """Integration test: full submit flow through SDK."""
 
-from pathlib import Path
-
 import pytest
 
 from agentipedia import Agentipedia, AgentipediaError

@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 
 import pytest
@@ -81,7 +80,10 @@ class TestDiff:
     def test_returns_diff_result(self, config, httpx_mock):
         httpx_mock.add_response(
             url="https://test.agentipedia.ai/api/runs/r2/diff?base=r1",
-            json={"success": True, "data": {"base_run_id": "r1", "target_run_id": "r2", "files": []}},
+            json={
+                "success": True,
+                "data": {"base_run_id": "r1", "target_run_id": "r2", "files": []},
+            },
         )
         agp = Agentipedia(config=config)
         result = agp.diff("r2", base_run_id="r1")
@@ -92,7 +94,15 @@ class TestFetch:
     def test_writes_files_to_disk(self, config, httpx_mock, tmp_path):
         httpx_mock.add_response(
             url="https://test.agentipedia.ai/api/runs/r1/code",
-            json={"success": True, "data": {"code_snapshot": {"train.py": "import torch\n", "utils.py": "# utils\n"}}},
+            json={
+                "success": True,
+                "data": {
+                    "code_snapshot": {
+                        "train.py": "import torch\n",
+                        "utils.py": "# utils\n",
+                    }
+                },
+            },
         )
         agp = Agentipedia(config=config)
         files = agp.fetch("r1", output_dir=tmp_path)
