@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { AppNav } from "@/components/layout/app-nav";
 import { Toaster } from "@/components/ui/sonner";
+import { WelcomeTweetDialog } from "@/components/shared/welcome-tweet-dialog";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -40,6 +42,9 @@ export default function RootLayout({
       <body className="min-h-screen bg-white text-gray-900 antialiased">
         <AppNav />
         <main className="pt-16">{children}</main>
+        <Suspense fallback={null}>
+          <WelcomeTweetDialog />
+        </Suspense>
         <Toaster />
       </body>
     </html>

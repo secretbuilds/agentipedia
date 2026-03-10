@@ -110,7 +110,7 @@ export function CreateHypothesisForm({
       if (mode === "edit" && initialData) {
         router.push(hypothesisUrl(initialData.id));
       } else if ("data" in result && result.data) {
-        router.push(hypothesisUrl(result.data.id));
+        router.push(`${hypothesisUrl(result.data.id)}?share=1`);
       }
     });
   };

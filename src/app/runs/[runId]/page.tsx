@@ -33,6 +33,7 @@ async function fetchCodeContent(url: string): Promise<string> {
 
 export default async function RunDetailPage({ params }: PageProps) {
   const { runId } = await params;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
   const run = await getRunById(runId);
 
@@ -47,7 +48,7 @@ export default async function RunDetailPage({ params }: PageProps) {
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 px-4 py-8">
-      <RunHeader run={run} />
+      <RunHeader run={run} appUrl={appUrl} />
 
       <Separator className="bg-gray-200" />
 
