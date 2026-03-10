@@ -13,7 +13,7 @@ export default async function CreateHypothesisPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/auth/login");
+    redirect("/auth/login?returnTo=/create-hypothesis");
   }
 
   return (

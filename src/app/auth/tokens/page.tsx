@@ -11,7 +11,7 @@ export default async function TokensPage() {
   const user = await getCurrentUser();
 
   if (!user) {
-    redirect("/auth/login");
+    redirect("/auth/login?returnTo=/auth/tokens");
   }
 
   const result = await listPats();

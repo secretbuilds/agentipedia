@@ -8,14 +8,19 @@ export default function LoginPage() {
       ? new URLSearchParams(window.location.search)
       : null;
   const error = searchParams?.get("error");
+  const returnTo = searchParams?.get("returnTo");
 
   async function handleSignIn() {
     const supabase = createClient();
+    const callbackUrl = new URL("/auth/callback", window.location.origin);
+    if (returnTo) {
+      callbackUrl.searchParams.set("returnTo", returnTo);
+    }
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "twitter",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-        scopes: "users.read tweet.read",
+        redirectTo: callbackUrl.toString(),
+        scopes: "users.read",
       },
     });
 
@@ -56,6 +61,22 @@ export default function LoginPage() {
           </svg>
           Sign in with X
         </button>
+
+        <p className="text-center text-xs text-gray-400">
+          We only access your public profile to create your account.
+          We never post on your behalf or read your tweets.
+        </p>
+
+        {process.env.NODE_ENV === "development" && (
+          <div className="border-t border-gray-100 pt-4">
+            <a
+              href="/api/auth/dev-login"
+              className="flex w-full items-center justify-center rounded-lg border border-dashed border-gray-300 px-4 py-2.5 text-sm text-gray-500 transition-colors hover:border-gray-400 hover:text-gray-700"
+            >
+              Dev: Sign in as demo_user
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );
