@@ -109,12 +109,55 @@ export async function POST(request: Request) {
       tag_1: (formData.get("tag_1") as string | null) || null,
       tag_2: (formData.get("tag_2") as string | null) || null,
       forked_from: (formData.get("forked_from") as string | null) || null,
+      synthesis: (formData.get("synthesis") as string | null) || null,
     };
 
     const parsed = runSchema.safeParse(rawFields);
     if (!parsed.success) {
       const firstError = parsed.error.issues?.[0]?.message ?? "Validation failed";
       return jsonError(firstError, 400);
+    }
+
+    // V2: Extract code_snapshot and synthesis
+    const rawCodeSnapshot = formData.get("code_snapshot") as string | null;
+    const synthesis = parsed.data.synthesis ?? null;
+
+    // Parse and validate code_snapshot JSON if provided
+    let codeSnapshot: Record<string, string> | null = null;
+    if (rawCodeSnapshot) {
+      try {
+        const parsed_snapshot = JSON.parse(rawCodeSnapshot);
+        if (
+          typeof parsed_snapshot !== "object" ||
+          parsed_snapshot === null ||
+          Array.isArray(parsed_snapshot)
+        ) {
+          return jsonError(
+            "code_snapshot must be a JSON object mapping filenames to contents",
+            400,
+          );
+        }
+        for (const [key, value] of Object.entries(parsed_snapshot)) {
+          if (typeof key !== "string" || typeof value !== "string") {
+            return jsonError(
+              "code_snapshot values must all be strings",
+              400,
+            );
+          }
+        }
+        const snapshotSize = new TextEncoder().encode(
+          rawCodeSnapshot,
+        ).byteLength;
+        if (snapshotSize > 5 * 1024 * 1024) {
+          return jsonError(
+            "code_snapshot exceeds maximum size of 5 MB",
+            400,
+          );
+        }
+        codeSnapshot = parsed_snapshot as Record<string, string>;
+      } catch {
+        return jsonError("code_snapshot must be valid JSON", 400);
+      }
     }
 
     // 6. Extract & validate results.tsv
@@ -157,31 +200,42 @@ export async function POST(request: Request) {
       );
     }
 
-    // 9. Extract & validate code file
+    // 9. Extract & validate code file (optional when code_snapshot provided)
     const codeFile = formData.get("code_file") as File | null;
-    if (!codeFile || codeFile.size === 0) {
-      return jsonError("code_file is required", 400);
-    }
-    if (codeFile.size > MAX_CODE_SIZE) {
-      return jsonError("code_file exceeds maximum size of 1 MB", 400);
-    }
-
-    const codeExtension = getFileExtension(codeFile.name);
-    if (!ALLOWED_CODE_EXTENSIONS.includes(codeExtension)) {
+    if ((!codeFile || codeFile.size === 0) && !codeSnapshot) {
       return jsonError(
-        `Invalid code file type. Allowed: ${ALLOWED_CODE_EXTENSIONS.join(", ")}`,
+        "Either code_file or code_snapshot is required",
         400,
       );
     }
 
-    const codeBuffer = await codeFile.arrayBuffer();
+    let codeBuffer: ArrayBuffer | null = null;
+    let safeCodeFilename: string | null = null;
 
-    // Validate code file contains valid UTF-8 text (no binary content)
-    try {
-      const codeDecoder = new TextDecoder("utf-8", { fatal: true });
-      codeDecoder.decode(codeBuffer);
-    } catch {
-      return jsonError("Code file must be valid UTF-8 text", 400);
+    if (codeFile && codeFile.size > 0) {
+      if (codeFile.size > MAX_CODE_SIZE) {
+        return jsonError("code_file exceeds maximum size of 1 MB", 400);
+      }
+
+      const codeExtension = getFileExtension(codeFile.name);
+      if (!ALLOWED_CODE_EXTENSIONS.includes(codeExtension)) {
+        return jsonError(
+          `Invalid code file type. Allowed: ${ALLOWED_CODE_EXTENSIONS.join(", ")}`,
+          400,
+        );
+      }
+
+      codeBuffer = await codeFile.arrayBuffer();
+
+      // Validate code file contains valid UTF-8 text (no binary content)
+      try {
+        const codeDecoder = new TextDecoder("utf-8", { fatal: true });
+        codeDecoder.decode(codeBuffer);
+      } catch {
+        return jsonError("Code file must be valid UTF-8 text", 400);
+      }
+
+      safeCodeFilename = sanitizeFilename(codeFile.name);
     }
 
     // 10. Upload files and insert data
@@ -203,30 +257,47 @@ export async function POST(request: Request) {
     }
     storagePaths.push(tsvPath);
 
-    // Upload code file
-    const safeCodeFilename = sanitizeFilename(codeFile.name);
-    const codePath = `run-files/${hypothesisId}/${runId}/${safeCodeFilename}`;
-    const { error: codeUploadError } = await admin.storage
-      .from("run-files")
-      .upload(codePath, new Uint8Array(codeBuffer), {
-        contentType: "text/plain; charset=utf-8",
-        upsert: false,
-      });
+    // Upload code file (only when a file was provided)
+    let codePublicUrl = "";
+    let finalCodeFilename = "";
 
-    if (codeUploadError) {
-      console.error("Code upload error:", codeUploadError);
-      await admin.storage.from("run-files").remove(storagePaths);
-      return jsonError("Failed to upload code file", 500);
+    if (codeBuffer && safeCodeFilename) {
+      const codePath = `run-files/${hypothesisId}/${runId}/${safeCodeFilename}`;
+      const { error: codeUploadError } = await admin.storage
+        .from("run-files")
+        .upload(codePath, new Uint8Array(codeBuffer), {
+          contentType: "text/plain; charset=utf-8",
+          upsert: false,
+        });
+
+      if (codeUploadError) {
+        console.error("Code upload error:", codeUploadError);
+        await admin.storage.from("run-files").remove(storagePaths);
+        return jsonError("Failed to upload code file", 500);
+      }
+      storagePaths.push(codePath);
+
+      const { data: codeUrlData } = admin.storage
+        .from("run-files")
+        .getPublicUrl(codePath);
+      codePublicUrl = codeUrlData.publicUrl;
+      finalCodeFilename = safeCodeFilename;
+    } else if (codeSnapshot) {
+      // Derive filename from first key in snapshot
+      const firstKey = Object.keys(codeSnapshot)[0] ?? "code.py";
+      finalCodeFilename = sanitizeFilename(firstKey);
     }
-    storagePaths.push(codePath);
 
-    // Get public URLs
+    // Build code_snapshot from code_file if not already provided
+    if (!codeSnapshot && codeBuffer && safeCodeFilename) {
+      const codeContent = new TextDecoder().decode(codeBuffer);
+      codeSnapshot = { [safeCodeFilename]: codeContent };
+    }
+
+    // Get public URL for TSV
     const { data: tsvUrlData } = admin.storage
       .from("run-files")
       .getPublicUrl(tsvPath);
-    const { data: codeUrlData } = admin.storage
-      .from("run-files")
-      .getPublicUrl(codePath);
 
     // Insert run row
     const { stats } = tsvResult;
@@ -252,8 +323,10 @@ export async function POST(request: Request) {
         num_crashed: stats.numCrashed,
         improvement_pct: stats.improvementPct ?? 0,
         results_tsv_url: tsvUrlData.publicUrl,
-        code_file_url: codeUrlData.publicUrl,
-        code_filename: safeCodeFilename,
+        code_file_url: codePublicUrl,
+        code_filename: finalCodeFilename,
+        code_snapshot: codeSnapshot,
+        synthesis: synthesis,
       });
 
     if (runInsertError) {

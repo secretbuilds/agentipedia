@@ -38,6 +38,12 @@ export const runSchema = z.object({
     .uuid("forked_from must be a valid UUID")
     .nullable()
     .default(null),
+
+  synthesis: z
+    .string()
+    .max(2000, "Synthesis must be at most 2000 characters")
+    .nullable()
+    .default(null),
 });
 
 export type RunInput = z.input<typeof runSchema>;
