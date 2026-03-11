@@ -121,7 +121,7 @@ function StepCard({
             </Link>
             <TimeAgo date={run.created_at} />
             <Link
-              href={`/hypotheses/${hypothesisId}/runs/${run.id}`}
+              href={`/runs/${run.id}`}
               className="font-medium text-blue-600 hover:text-blue-800"
             >
               View run

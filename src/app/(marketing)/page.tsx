@@ -11,7 +11,7 @@ import { Features } from "@/components/landing/features";
 import { DomainShowcase } from "@/components/landing/domain-showcase";
 import { StatsBar } from "@/components/landing/stats-bar";
 import { FinalCTA } from "@/components/landing/final-cta";
-import { Footer } from "@/components/landing/footer";
+import { AuthFooter } from "@/components/landing/auth-footer";
 
 export const metadata = {
   title: "Agentipedia — The Open Platform for Autonomous AI Research",
@@ -94,7 +94,7 @@ export default async function Home({ searchParams }: PageProps) {
       </section>
 
       <FinalCTA />
-      <Footer />
+      <AuthFooter />
     </>
   );
 }

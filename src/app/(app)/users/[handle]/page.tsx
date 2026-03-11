@@ -16,7 +16,17 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 type PageProps = {
   params: Promise<{ handle: string }>;
+  searchParams: Promise<{ tab?: string }>;
 };
+
+const VALID_TABS = ["hypotheses", "runs"] as const;
+type ValidTab = (typeof VALID_TABS)[number];
+
+function resolveTab(raw: string | undefined): ValidTab {
+  return VALID_TABS.includes(raw as ValidTab)
+    ? (raw as ValidTab)
+    : "hypotheses";
+}
 
 export async function generateMetadata({
   params,
@@ -31,8 +41,10 @@ export async function generateMetadata({
 // Page
 // ---------------------------------------------------------------------------
 
-export default async function UserProfilePage({ params }: PageProps) {
+export default async function UserProfilePage({ params, searchParams }: PageProps) {
   const { handle } = await params;
+  const { tab } = await searchParams;
+  const activeTab = resolveTab(tab);
   const user = await getUserByHandle(handle);
 
   if (!user) {
@@ -53,7 +65,7 @@ export default async function UserProfilePage({ params }: PageProps) {
           runCount={runs.length}
         />
 
-        <Tabs defaultValue="hypotheses">
+        <Tabs defaultValue={activeTab}>
           <TabsList>
             <TabsTrigger value="hypotheses">
               Hypotheses ({hypotheses.length})

@@ -1,7 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export function Footer() {
+type FooterProps = {
+  readonly user?: { readonly x_handle: string } | null;
+};
+
+export function Footer({ user }: FooterProps) {
   return (
     <footer className="border-t border-gray-100 bg-gray-50 py-8">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -24,9 +28,21 @@ export function Footer() {
               <Link href="/hypotheses/new" className="transition-colors hover:text-gray-900">
                 New Hypothesis
               </Link>
-              <Link href="/auth/login" className="transition-colors hover:text-gray-900">
-                Sign in
-              </Link>
+              {user ? (
+                <Link
+                  href={`/users/${user.x_handle}`}
+                  className="transition-colors hover:text-gray-900"
+                >
+                  Your Profile
+                </Link>
+              ) : (
+                <Link
+                  href="/auth/login"
+                  className="transition-colors hover:text-gray-900"
+                >
+                  Sign in
+                </Link>
+              )}
             </nav>
           </div>
 

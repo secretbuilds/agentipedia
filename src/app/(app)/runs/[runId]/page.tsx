@@ -6,6 +6,7 @@ import { RunStats } from "@/components/run/run-stats";
 import { ProgressionChart } from "@/components/run/progression-chart";
 import { ExperimentTable } from "@/components/run/experiment-table";
 import { CodeViewer } from "@/components/run/code-viewer";
+import { RunDiffSection } from "@/components/run/run-diff-section";
 import { Separator } from "@/components/ui/separator";
 
 type PageProps = {
@@ -67,6 +68,10 @@ export default async function RunDetailPage({ params }: PageProps) {
       />
 
       <CodeViewer code={codeContent} filename={run.code_filename} />
+
+      {run.forked_from && (
+        <RunDiffSection runId={runId} forkedFromId={run.forked_from} />
+      )}
     </div>
   );
 }
