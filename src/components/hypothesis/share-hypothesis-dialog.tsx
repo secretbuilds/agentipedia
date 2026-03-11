@@ -24,12 +24,17 @@ export function ShareHypothesisDialog({
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
+  const resolvedUrl =
+    typeof window !== "undefined" && hypUrl.startsWith("http://localhost")
+      ? `${window.location.origin}${new URL(hypUrl).pathname}`
+      : hypUrl;
+
   const tweetText = composeHypothesisTweet({
     hypothesisTitle,
     metricName,
     metricDirection,
     domain,
-    hypothesisUrl: hypUrl,
+    hypothesisUrl: resolvedUrl,
   });
 
   useEffect(() => {

@@ -10,6 +10,11 @@ type ShareToXButtonProps = {
 };
 
 export function ShareToXButton({ run, appUrl }: ShareToXButtonProps) {
+  const baseUrl =
+    typeof window !== "undefined" && appUrl.startsWith("http://localhost")
+      ? window.location.origin
+      : appUrl;
+
   const tweetText = composeTweetText({
     hypothesisTitle: run.hypothesis_title,
     baselineMetric: run.baseline_metric,
@@ -18,7 +23,7 @@ export function ShareToXButton({ run, appUrl }: ShareToXButtonProps) {
     metricName: run.hypothesis_metric_name,
     metricDirection: run.hypothesis_metric_direction,
     numExperiments: run.num_experiments,
-    runUrl: `${appUrl}/runs/${run.id}`,
+    runUrl: `${baseUrl}/runs/${run.id}`,
   });
 
   return <TweetIntentButton tweetText={tweetText} />;

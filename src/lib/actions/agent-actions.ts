@@ -100,7 +100,7 @@ export async function createAgent(
         return { success: false, error: "Agent slug already taken" };
       }
       console.error("createAgent insert error:", error);
-      return { success: false, error: "Failed to create agent" };
+      return { success: false, error: `Failed to create agent: ${error?.message ?? "unknown error"}` };
     }
 
     return {
