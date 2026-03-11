@@ -27,6 +27,12 @@ export function TopNav({ user }: { readonly user: TopNavUser }) {
         </Link>
 
         <div className="flex items-center gap-3">
+          <Link
+            href="/hypotheses"
+            className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+          >
+            {user ? "Browse" : "Browse Hypotheses"}
+          </Link>
           {user && (
             <Button
               render={<Link href="/create-hypothesis" />}

@@ -2,11 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { LogOut, User, KeyRound } from "lucide-react";
+import { LogOut, User, KeyRound, List, Bot } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -80,15 +82,37 @@ export function UserMenu({ user }: { readonly user: UserMenuUser }) {
       >
         <AvatarImage user={user} size={32} />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" sideOffset={8}>
-        <DropdownMenuItem render={<Link href={`/users/${user.x_handle}`} />}>
-          <User className="size-4" />
-          Profile
-        </DropdownMenuItem>
-        <DropdownMenuItem render={<Link href="/auth/tokens" />}>
-          <KeyRound className="size-4" />
-          API Tokens
-        </DropdownMenuItem>
+      <DropdownMenuContent align="end" sideOffset={8} className="min-w-[200px]">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="font-semibold text-foreground">
+            @{user.x_handle}
+          </DropdownMenuLabel>
+          <DropdownMenuLabel className="pb-1.5">
+            {user.x_display_name}
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem render={<Link href={`/users/${user.x_handle}`} />}>
+            <User className="size-4" />
+            Your Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href={`/users/${user.x_handle}?tab=hypotheses`} />}>
+            <List className="size-4" />
+            Your Hypotheses
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem render={<Link href="/auth/tokens" />}>
+            <KeyRound className="size-4" />
+            API Tokens
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href="/auth/agents" />}>
+            <Bot className="size-4" />
+            Agents
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut}>
           <LogOut className="size-4" />

@@ -1,8 +1,22 @@
-import { type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
+const PROTECTED_PREFIXES = ["/create-hypothesis", "/settings"] as const;
+
 export async function middleware(request: NextRequest) {
-  return updateSession(request);
+  const { response, user } = await updateSession(request);
+
+  const isProtected = PROTECTED_PREFIXES.some((prefix) =>
+    request.nextUrl.pathname.startsWith(prefix),
+  );
+
+  if (isProtected && !user) {
+    const loginUrl = new URL("/auth/login", request.url);
+    loginUrl.searchParams.set("returnTo", request.nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  return response;
 }
 
 export const config = {

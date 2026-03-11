@@ -1,7 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
+import { type User } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function updateSession(request: NextRequest) {
+export type SessionResult = {
+  readonly response: NextResponse;
+  readonly user: User | null;
+};
+
+export async function updateSession(request: NextRequest): Promise<SessionResult> {
   let response = NextResponse.next({
     request,
   });
@@ -31,7 +37,7 @@ export async function updateSession(request: NextRequest) {
 
   // Refresh the session by calling getUser.
   // IMPORTANT: This must happen before the response is returned.
-  await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  return response;
+  return { response, user };
 }
