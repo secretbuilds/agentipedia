@@ -24,9 +24,9 @@ type XProfileData = {
 export function extractXProfile(user: User): XProfileData {
   const meta = user.user_metadata ?? {};
 
-  // Find the X/Twitter identity specifically — don't just use identities[0]
+  // Find the X/Twitter identity — provider may be "x" or "twitter" depending on Supabase version
   const twitterIdentity = user.identities?.find(
-    (i) => i.provider === "twitter"
+    (i) => i.provider === "x" || i.provider === "twitter"
   );
 
   // Extract x_user_id from the most reliable source
