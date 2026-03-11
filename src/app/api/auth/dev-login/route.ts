@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { syncUserProfile } from "@/lib/auth/sync-user-profile";
 
 const DEMO_EMAIL = "demo@agentipedia.ai";
 const DEMO_PASSWORD = "REDACTED";
@@ -10,17 +11,7 @@ export async function GET() {
     return NextResponse.json({ error: "Not available" }, { status: 404 });
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!supabaseUrl || !serviceRoleKey) {
-    return NextResponse.json(
-      { error: "Missing Supabase config" },
-      { status: 500 },
-    );
-  }
-
-  const admin = createAdminClient(supabaseUrl, serviceRoleKey);
+  const admin = createAdminClient();
 
   // Ensure the demo user exists (created through admin API so GoTrue knows about it)
   const { data: listData } = await admin.auth.admin.listUsers();
@@ -48,10 +39,11 @@ export async function GET() {
 
   // Sign in with password — sets session cookies via the server client
   const supabase = await createClient();
-  const { error: signInError } = await supabase.auth.signInWithPassword({
-    email: DEMO_EMAIL,
-    password: DEMO_PASSWORD,
-  });
+  const { data: signInData, error: signInError } =
+    await supabase.auth.signInWithPassword({
+      email: DEMO_EMAIL,
+      password: DEMO_PASSWORD,
+    });
 
   if (signInError) {
     // If password is wrong (user existed before), update it and retry
@@ -60,21 +52,37 @@ export async function GET() {
         demoUser?.id ?? "",
         { password: DEMO_PASSWORD },
       );
-      const { error: retryError } = await supabase.auth.signInWithPassword({
-        email: DEMO_EMAIL,
-        password: DEMO_PASSWORD,
-      });
+      const { data: retryData, error: retryError } =
+        await supabase.auth.signInWithPassword({
+          email: DEMO_EMAIL,
+          password: DEMO_PASSWORD,
+        });
       if (retryError) {
         return NextResponse.json(
           { error: `Dev login failed: ${retryError.message}` },
           { status: 500 },
         );
       }
+      // Best-effort sync of demo user profile into public.users
+      if (retryData.user) {
+        try {
+          await syncUserProfile(retryData.user);
+        } catch (err) {
+          console.error("[dev-login] syncUserProfile error:", err);
+        }
+      }
     } else {
       return NextResponse.json(
         { error: `Dev login failed: ${signInError.message}` },
         { status: 500 },
       );
+    }
+  } else if (signInData.user) {
+    // Best-effort sync of demo user profile into public.users
+    try {
+      await syncUserProfile(signInData.user);
+    } catch (err) {
+      console.error("[dev-login] syncUserProfile error:", err);
     }
   }
 

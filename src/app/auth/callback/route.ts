@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { syncUserProfile } from "@/lib/auth/sync-user-profile";
 
 export async function GET(request: Request) {
   const origin = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -12,6 +13,15 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
+      // Best-effort sync of X/Twitter profile into public.users
+      if (data.user) {
+        try {
+          await syncUserProfile(data.user);
+        } catch (err) {
+          console.error("[auth/callback] syncUserProfile error:", err);
+        }
+      }
+
       // Check if this is a brand-new user (created_at ≈ now, within 30 seconds)
       const isNewUser = data.user?.created_at
         ? Date.now() - new Date(data.user.created_at).getTime() < 30_000
