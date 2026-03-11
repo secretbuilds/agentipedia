@@ -13,7 +13,3 @@ export function userUrl(handle: string): string {
 export function submitRunUrl(hypothesisId: string): string {
   return `/hypotheses/${hypothesisId}/submit-run`;
 }
-
-export function createHypothesisUrl(): string {
-  return "/hypotheses/new";
-}
