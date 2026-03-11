@@ -23,12 +23,25 @@ type XProfileData = {
  */
 export function extractXProfile(user: User): XProfileData {
   const meta = user.user_metadata ?? {};
-  const identity = user.identities?.[0];
 
+  // Find the X/Twitter identity specifically — don't just use identities[0]
+  const twitterIdentity = user.identities?.find(
+    (i) => i.provider === "twitter"
+  );
+
+  // Extract x_user_id from the most reliable source
+  // Priority: identity_data.provider_id > identity.id > meta.provider_id
+  // NEVER fall back to user.id — that's the Supabase UUID, not the Twitter ID
   const x_user_id =
-    meta.provider_id ??
-    identity?.id ??
-    user.id;
+    twitterIdentity?.identity_data?.provider_id ??
+    twitterIdentity?.id ??
+    meta.provider_id;
+
+  if (!x_user_id) {
+    throw new Error(
+      `Could not extract X/Twitter user ID for auth user ${user.id}`
+    );
+  }
 
   const x_handle =
     meta.preferred_username ??
@@ -61,38 +74,29 @@ export function extractXProfile(user: User): XProfileData {
  * Upserts a user's X/Twitter profile into public.users.
  *
  * Uses the admin client to bypass RLS. On conflict (returning user),
- * updates profile fields and last_login_at. This is best-effort:
- * errors are logged but never thrown, so the caller's redirect flow
- * is never interrupted.
+ * updates profile fields and last_login_at. Throws on failure so
+ * the caller can sign out the broken session and redirect to an error page.
  */
 export async function syncUserProfile(user: User): Promise<void> {
-  try {
-    const profile = extractXProfile(user);
+  const profile = extractXProfile(user);
 
-    const admin = createAdminClient();
+  const admin = createAdminClient();
 
-    const { error } = await admin.from("users").upsert(
-      {
-        id: profile.id,
-        x_user_id: profile.x_user_id,
-        x_handle: profile.x_handle,
-        x_display_name: profile.x_display_name,
-        x_avatar_url: profile.x_avatar_url,
-        last_login_at: new Date().toISOString(),
-      },
-      { onConflict: "id" },
-    );
+  const { error } = await admin.from("users").upsert(
+    {
+      id: profile.id,
+      x_user_id: profile.x_user_id,
+      x_handle: profile.x_handle,
+      x_display_name: profile.x_display_name,
+      x_avatar_url: profile.x_avatar_url,
+      last_login_at: new Date().toISOString(),
+    },
+    { onConflict: "id" },
+  );
 
-    if (error) {
-      console.error(
-        "[syncUserProfile] Failed to upsert public.users:",
-        error.message,
-      );
-    }
-  } catch (err) {
-    console.error(
-      "[syncUserProfile] Unexpected error:",
-      err instanceof Error ? err.message : err,
+  if (error) {
+    throw new Error(
+      `Failed to upsert public.users for ${user.id}: ${error.message}`
     );
   }
 }

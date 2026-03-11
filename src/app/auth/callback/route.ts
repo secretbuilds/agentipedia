@@ -3,22 +3,30 @@ import { createClient } from "@/lib/supabase/server";
 import { syncUserProfile } from "@/lib/auth/sync-user-profile";
 
 export async function GET(request: Request) {
-  const origin = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const { searchParams } = new URL(request.url);
-  const code = searchParams.get("code");
-  const returnTo = searchParams.get("returnTo");
+  const requestUrl = new URL(request.url);
+  const origin = requestUrl.origin;
+  const code = requestUrl.searchParams.get("code");
+  const returnTo = requestUrl.searchParams.get("returnTo");
 
   if (code) {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      // Best-effort sync of X/Twitter profile into public.users
+      // Sync X/Twitter profile into public.users — fail if broken
       if (data.user) {
         try {
           await syncUserProfile(data.user);
         } catch (err) {
           console.error("[auth/callback] syncUserProfile error:", err);
+          // If profile sync fails, sign out the broken session and redirect to error
+          await supabase.auth.signOut();
+          const loginUrl = new URL("/auth/login", origin);
+          loginUrl.searchParams.set(
+            "error",
+            "Failed to set up your account. Please try again."
+          );
+          return NextResponse.redirect(loginUrl.toString());
         }
       }
 
