@@ -20,8 +20,10 @@ type UserMenuUser = {
 } | null;
 
 function getInitials(displayName: string): string {
+  if (!displayName.trim()) return "?";
   return displayName
     .split(" ")
+    .filter(Boolean)
     .map((part) => part[0])
     .join("")
     .toUpperCase()
@@ -66,10 +68,10 @@ export function UserMenu({ user }: { readonly user: UserMenuUser }) {
   }
 
   const handleSignOut = async () => {
-    const response = await fetch("/auth/signout", { method: "POST" });
-    if (response.redirected) {
-      window.location.href = response.url;
-    } else {
+    try {
+      const response = await fetch("/auth/signout", { method: "POST" });
+      window.location.href = response.redirected ? response.url : "/";
+    } catch {
       window.location.href = "/";
     }
   };
