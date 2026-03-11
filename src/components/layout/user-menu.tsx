@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { LogOut, User, KeyRound, List, Bot, PlusCircle } from "lucide-react";
+import { LogOut, User, List, Bot, PlusCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -113,10 +113,6 @@ export function UserMenu({ user }: { readonly user: UserMenuUser }) {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem render={<Link href="/auth/tokens" />}>
-            <KeyRound className="size-4" />
-            API Tokens
-          </DropdownMenuItem>
           <DropdownMenuItem render={<Link href="/auth/agents" />}>
             <Bot className="size-4" />
             Agents

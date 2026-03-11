@@ -4,7 +4,6 @@ import { updateSession } from "@/lib/supabase/middleware";
 const PROTECTED_PREFIXES = [
   "/hypotheses/new",
   "/settings",
-  "/auth/tokens",
   "/auth/agents",
 ] as const;
 
