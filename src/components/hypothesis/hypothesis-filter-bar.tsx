@@ -58,7 +58,7 @@ export function HypothesisFilterBar() {
       // Reset cursor when filters change
       params.delete("cursor");
       const qs = params.toString();
-      router.push(qs ? `/?${qs}` : "/");
+      router.push(qs ? `/hypotheses?${qs}` : "/hypotheses");
     },
     [router, searchParams],
   );

@@ -97,7 +97,7 @@ export function Hero() {
 
               <div className="flex flex-wrap gap-3">
                 <Button
-                  render={<Link href="#feed" />}
+                  render={<Link href="/hypotheses" />}
                   className="h-12 rounded-full px-7 text-base font-medium transition-transform hover:scale-105"
                   nativeButton={false}
                 >
