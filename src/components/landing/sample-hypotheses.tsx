@@ -102,7 +102,7 @@ export function SampleHypotheses() {
           These are example hypotheses. Be the first to post a real one.
         </p>
         <Button
-          render={<Link href="/create-hypothesis" />}
+          render={<Link href="/hypotheses/new" />}
           className="rounded-full px-6"
           nativeButton={false}
         >

@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 const PROTECTED_PREFIXES = [
-  "/create-hypothesis",
+  "/hypotheses/new",
   "/settings",
   "/auth/tokens",
   "/auth/agents",

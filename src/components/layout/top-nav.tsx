@@ -35,7 +35,7 @@ export function TopNav({ user }: { readonly user: TopNavUser }) {
           </Link>
           {user && (
             <Button
-              render={<Link href="/create-hypothesis" />}
+              render={<Link href="/hypotheses/new" />}
               variant="default"
               size="sm"
               nativeButton={false}

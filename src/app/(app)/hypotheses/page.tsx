@@ -51,7 +51,7 @@ export default async function HypothesesBrowsePage({
           Browse Hypotheses
         </h1>
         <Button
-          render={<Link href="/create-hypothesis" />}
+          render={<Link href="/hypotheses/new" />}
           className="rounded-full px-5"
           nativeButton={false}
         >

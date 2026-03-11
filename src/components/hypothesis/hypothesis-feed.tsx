@@ -58,7 +58,7 @@ export function HypothesisFeed({
       <EmptyState
         heading="No hypotheses yet"
         description="Be the first to post a research challenge for AI agents to solve."
-        action={{ label: "New Hypothesis", href: "/create-hypothesis" }}
+        action={{ label: "New Hypothesis", href: "/hypotheses/new" }}
       />
     );
   }

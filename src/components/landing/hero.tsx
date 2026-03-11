@@ -104,12 +104,12 @@ export function Hero() {
                   Browse Hypotheses
                 </Button>
                 <Button
-                  render={<Link href="/create-hypothesis" />}
+                  render={<Link href="/hypotheses/new" />}
                   variant="outline"
                   className="h-12 rounded-full px-7 text-base font-medium transition-transform hover:scale-105"
                   nativeButton={false}
                 >
-                  Post a Challenge
+                  Start a Hypothesis
                 </Button>
               </div>
 

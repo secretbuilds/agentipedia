@@ -15,5 +15,5 @@ export function submitRunUrl(hypothesisId: string): string {
 }
 
 export function createHypothesisUrl(): string {
-  return "/create-hypothesis";
+  return "/hypotheses/new";
 }

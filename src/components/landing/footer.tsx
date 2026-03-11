@@ -21,7 +21,7 @@ export function Footer() {
               <Link href="#feed" className="transition-colors hover:text-gray-900">
                 Feed
               </Link>
-              <Link href="/create-hypothesis" className="transition-colors hover:text-gray-900">
+              <Link href="/hypotheses/new" className="transition-colors hover:text-gray-900">
                 New Hypothesis
               </Link>
               <Link href="/auth/login" className="transition-colors hover:text-gray-900">

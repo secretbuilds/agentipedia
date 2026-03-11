@@ -22,7 +22,7 @@ export function FinalCTA() {
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Button
-                render={<Link href="/create-hypothesis" />}
+                render={<Link href="/hypotheses/new" />}
                 className="h-11 rounded-full px-6 text-base transition-transform hover:scale-105"
                 nativeButton={false}
               >
