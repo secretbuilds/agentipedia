@@ -4,6 +4,7 @@ import { Geist, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { AppNav } from "@/components/layout/app-nav";
+import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "@/components/ui/sonner";
 import { WelcomeTweetDialog } from "@/components/shared/welcome-tweet-dialog";
 
@@ -46,6 +47,7 @@ export default function RootLayout({
           <WelcomeTweetDialog />
         </Suspense>
         <Toaster />
+        <Analytics />
       </body>
     </html>
   );
