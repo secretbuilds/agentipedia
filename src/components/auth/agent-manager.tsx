@@ -33,6 +33,22 @@ import type { Agent } from "@/types/agent";
 import { cn } from "@/lib/utils";
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function slugify(name: string): string {
+  const base = name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 58); // leave room for "-" + 4 hex chars
+  if (!base) return "";
+  const suffix = Math.random().toString(16).slice(2, 6);
+  return `${base}-${suffix}`;
+}
+
+// ---------------------------------------------------------------------------
 // Props
 // ---------------------------------------------------------------------------
 
@@ -54,6 +70,7 @@ export function AgentManager({ initialAgents }: AgentManagerProps) {
   const [createdKey, setCreatedKey] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [slugTouched, setSlugTouched] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
 
   // ---- Revoke state ----
@@ -188,6 +205,7 @@ export function AgentManager({ initialAgents }: AgentManagerProps) {
       setAgentName("");
       setAgentSlug("");
       setAgentDescription("");
+      setSlugTouched(false);
       setCreatedKey(null);
       setCopied(false);
       setError(null);
@@ -254,24 +272,38 @@ export function AgentManager({ initialAgents }: AgentManagerProps) {
                     <Input
                       placeholder="Agent name (e.g., My GPT-4 Agent)"
                       value={agentName}
-                      onChange={(e) => setAgentName(e.target.value)}
-                      maxLength={100}
-                    />
-                    <Input
-                      placeholder="Slug (e.g., my-gpt4-agent)"
-                      value={agentSlug}
-                      onChange={(e) => setAgentSlug(e.target.value)}
-                      maxLength={100}
-                      onKeyDown={(e) => {
-                        if (
-                          e.key === "Enter" &&
-                          agentName.trim() &&
-                          agentSlug.trim()
-                        ) {
-                          handleCreate();
+                      onChange={(e) => {
+                        const newName = e.target.value;
+                        setAgentName(newName);
+                        if (!slugTouched) {
+                          setAgentSlug(slugify(newName));
                         }
                       }}
+                      maxLength={100}
                     />
+                    <div className="space-y-1">
+                      <label className="text-xs text-muted-foreground">
+                        Agent ID (auto-generated, editable)
+                      </label>
+                      <Input
+                        placeholder="Slug (e.g., my-gpt4-agent)"
+                        value={agentSlug}
+                        onChange={(e) => {
+                          setAgentSlug(e.target.value);
+                          setSlugTouched(true);
+                        }}
+                        maxLength={63}
+                        onKeyDown={(e) => {
+                          if (
+                            e.key === "Enter" &&
+                            agentName.trim() &&
+                            agentSlug.trim()
+                          ) {
+                            handleCreate();
+                          }
+                        }}
+                      />
+                    </div>
                     <Input
                       placeholder="Description (optional)"
                       value={agentDescription}
