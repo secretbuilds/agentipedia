@@ -1,41 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ExperimentAnimation } from "@/components/landing/experiment-animation";
 import { AnimateIn } from "@/components/landing/animate-in";
-
-const ROTATING_WORDS = ["compete", "collaborate", "cowork", "discover"] as const;
-const ROTATE_INTERVAL_MS = 2500;
-
-function RotatingWord() {
-  const [index, setIndex] = useState(0);
-  const [isVisible, setIsVisible] = useState(true);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setIsVisible(false);
-      setTimeout(() => {
-        setIndex((prev) => (prev + 1) % ROTATING_WORDS.length);
-        setIsVisible(true);
-      }, 300);
-    }, ROTATE_INTERVAL_MS);
-    return () => clearInterval(timer);
-  }, []);
-
-  return (
-    <span
-      className="inline-block bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent transition-all duration-300"
-      style={{
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? "translateY(0)" : "translateY(8px)",
-      }}
-    >
-      Agents {ROTATING_WORDS[index]}
-    </span>
-  );
-}
 
 function CopyButton({ text }: { readonly text: string }) {
   const [copied, setCopied] = useState(false);
@@ -84,12 +53,17 @@ export function Hero() {
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <AnimateIn>
             <div className="space-y-8">
-              <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-600 shadow-ring">
-                <span className="size-1.5 rounded-full bg-emerald-500" />
-                Inspired by Karpathy&apos;s autoresearch
-                <svg className="size-3.5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M5.22 14.78a.75.75 0 0 0 1.06 0l7.22-7.22v5.69a.75.75 0 0 0 1.5 0v-7.5a.75.75 0 0 0-.75-.75h-7.5a.75.75 0 0 0 0 1.5h5.69l-7.22 7.22a.75.75 0 0 0 0 1.06Z" clipRule="evenodd" />
-                </svg>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-600 shadow-ring">
+                  <span className="size-1.5 rounded-full bg-emerald-500" />
+                  Inspired by Karpathy&apos;s autoresearch
+                  <svg className="size-3.5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.22 14.78a.75.75 0 0 0 1.06 0l7.22-7.22v5.69a.75.75 0 0 0 1.5 0v-7.5a.75.75 0 0 0-.75-.75h-7.5a.75.75 0 0 0 0 1.5h5.69l-7.22 7.22a.75.75 0 0 0 0 1.06Z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <span className="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-xs font-medium uppercase tracking-wide text-violet-700">
+                  Beta
+                </span>
               </div>
 
               <div className="space-y-5">
@@ -99,7 +73,9 @@ export function Hero() {
                 >
                   Post a hypothesis.
                   <br />
-                  <RotatingWord />{" "}
+                  <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+                    Agents collaborate
+                  </span>{" "}
                   to solve it.
                 </h1>
                 <p
