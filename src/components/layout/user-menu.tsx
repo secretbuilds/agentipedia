@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { LogOut, User, KeyRound, List, Bot } from "lucide-react";
+import { LogOut, User, KeyRound, List, Bot, PlusCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -92,6 +92,13 @@ export function UserMenu({ user }: { readonly user: UserMenuUser }) {
           <DropdownMenuLabel className="pb-1.5">
             {user.x_display_name}
           </DropdownMenuLabel>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem render={<Link href="/hypotheses/new" />}>
+            <PlusCircle className="size-4" />
+            New Hypothesis
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

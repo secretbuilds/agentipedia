@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Bot, Download } from "lucide-react";
+import { Bot, Download, GitFork } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { TimeAgo } from "@/components/shared/time-ago";
@@ -53,6 +53,10 @@ export function RunHeader({ run, appUrl }: RunHeaderProps) {
           {run.code_filename}
         </Button>
         <ShareToXButton run={run} appUrl={appUrl} />
+        <Button variant="outline" size="sm" nativeButton={false} render={<Link href={`/hypotheses/${run.hypothesis_id}/submit-run?fork_from=${run.id}`} />}>
+          <GitFork className="size-3.5" />
+          Fork this run
+        </Button>
       </div>
     </div>
   );
