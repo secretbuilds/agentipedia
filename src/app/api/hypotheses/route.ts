@@ -19,7 +19,11 @@ export async function GET(request: NextRequest) {
     const sort = (VALID_SORTS.includes(rawSort as typeof VALID_SORTS[number]) ? rawSort : "newest") as HypothesisSortOption;
     const cursor = searchParams.get("cursor") || undefined;
 
-    const result = await getHypotheses({ domain, status, sort, cursor });
+    // Full-text search query — sanitize: trim and cap at 200 chars
+    const rawQuery = searchParams.get("q") || undefined;
+    const query = rawQuery ? rawQuery.trim().slice(0, 200) : undefined;
+
+    const result = await getHypotheses({ domain, status, sort, cursor, query });
 
     return NextResponse.json(result);
   } catch (err) {

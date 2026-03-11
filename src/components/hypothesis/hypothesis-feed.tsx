@@ -14,6 +14,7 @@ type HypothesisFeedProps = {
     readonly domain?: string;
     readonly status?: string;
     readonly sort?: string;
+    readonly query?: string;
   };
 };
 
@@ -36,6 +37,7 @@ export function HypothesisFeed({
       if (filters.domain) params.set("domain", filters.domain);
       if (filters.status) params.set("status", filters.status);
       if (filters.sort) params.set("sort", filters.sort);
+      if (filters.query) params.set("q", filters.query);
       params.set("cursor", nextCursor);
 
       const res = await fetch(`/api/hypotheses?${params.toString()}`);

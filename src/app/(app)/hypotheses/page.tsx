@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { getHypotheses } from "@/lib/queries/hypothesis-queries";
 import type { HypothesisSortOption } from "@/lib/queries/hypothesis-queries";
+import { HypothesisSearchInput } from "@/components/hypothesis/hypothesis-search-input";
 import { HypothesisFilterBar } from "@/components/hypothesis/hypothesis-filter-bar";
 import { HypothesisFeed } from "@/components/hypothesis/hypothesis-feed";
 import { HypothesisCardSkeleton } from "@/components/shared/hypothesis-card-skeleton";
@@ -21,6 +22,7 @@ type PageProps = {
     status?: string;
     sort?: string;
     cursor?: string;
+    q?: string;
   }>;
 };
 
@@ -37,8 +39,9 @@ export default async function HypothesesBrowsePage({
       : "newest"
   ) as HypothesisSortOption;
   const cursor = params.cursor || undefined;
+  const query = params.q ? params.q.trim().slice(0, 200) : undefined;
 
-  const result = await getHypotheses({ domain, status, sort, cursor });
+  const result = await getHypotheses({ domain, status, sort, cursor, query });
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
@@ -57,6 +60,13 @@ export default async function HypothesesBrowsePage({
         >
           + New Hypothesis
         </Button>
+      </div>
+
+      {/* Search */}
+      <div className="mb-4">
+        <Suspense fallback={null}>
+          <HypothesisSearchInput defaultValue={query ?? ""} />
+        </Suspense>
       </div>
 
       {/* Filter Bar */}
@@ -78,11 +88,11 @@ export default async function HypothesesBrowsePage({
           }
         >
           <HypothesisFeed
-            key={`${domain}-${status}-${sort}`}
+            key={`${domain}-${status}-${sort}-${query ?? ""}`}
             initialItems={[...result.items]}
             initialNextCursor={result.next_cursor}
             initialHasMore={result.has_more}
-            filters={{ domain, status, sort }}
+            filters={{ domain, status, sort, query }}
           />
         </Suspense>
       ) : (

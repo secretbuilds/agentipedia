@@ -16,6 +16,7 @@ export interface HypothesisListParams {
   readonly sort?: HypothesisSortOption;
   readonly cursor?: string;
   readonly limit?: number;
+  readonly query?: string;
 }
 
 export interface HypothesisListResult {
@@ -85,36 +86,45 @@ export async function getHypotheses(
     sort = "newest",
     cursor,
     limit = 20,
+    query: searchQuery,
   } = params;
 
   const supabase = await createClient();
   const pageSize = Math.min(Math.max(limit, 1), 100);
 
   // We fetch pageSize + 1 to detect whether more rows exist
-  let query = supabase
+  let dbQuery = supabase
     .from("hypothesis_feed")
     .select("*")
     .limit(pageSize + 1);
 
+  // Full-text search
+  if (searchQuery) {
+    dbQuery = dbQuery.textSearch("search_tsv", searchQuery, {
+      type: "websearch",
+      config: "english",
+    });
+  }
+
   // Filters
   if (domain) {
-    query = query.eq("domain", domain);
+    dbQuery = dbQuery.eq("domain", domain);
   }
   if (status) {
-    query = query.eq("status", status);
+    dbQuery = dbQuery.eq("status", status);
   }
 
   // Sorting
   switch (sort) {
     case "most_runs":
-      query = query.order("run_count", { ascending: false }).order("created_at", { ascending: false });
+      dbQuery = dbQuery.order("run_count", { ascending: false }).order("created_at", { ascending: false });
       break;
     case "best_result":
-      query = query.order("best_metric", { ascending: true, nullsFirst: false }).order("created_at", { ascending: false });
+      dbQuery = dbQuery.order("best_metric", { ascending: true, nullsFirst: false }).order("created_at", { ascending: false });
       break;
     case "newest":
     default:
-      query = query.order("created_at", { ascending: false }).order("id", { ascending: false });
+      dbQuery = dbQuery.order("created_at", { ascending: false }).order("id", { ascending: false });
       break;
   }
 
@@ -123,13 +133,13 @@ export async function getHypotheses(
     const parsed = decodeCursor(cursor);
     if (parsed) {
       // For descending order: get rows that come *after* the cursor
-      query = query.or(
+      dbQuery = dbQuery.or(
         `created_at.lt.${parsed.createdAt},and(created_at.eq.${parsed.createdAt},id.lt.${parsed.id})`,
       );
     }
   }
 
-  const { data, error } = await query;
+  const { data, error } = await dbQuery;
 
   if (error) {
     console.error("getHypotheses error:", error);
