@@ -17,10 +17,9 @@ export default function LoginPage() {
       callbackUrl.searchParams.set("returnTo", returnTo);
     }
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
-      provider: "twitter",
+      provider: "x",
       options: {
         redirectTo: callbackUrl.toString(),
-        scopes: "users.read",
       },
     });
 
