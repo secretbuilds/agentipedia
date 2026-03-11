@@ -5,11 +5,13 @@ import { getHypothesisById } from "@/lib/queries/hypothesis-queries";
 import { SubmitRunForm } from "@/components/run/submit-run-form";
 
 type PageProps = {
-  params: Promise<{ hypothesisId: string }>;
+  readonly params: Promise<{ hypothesisId: string }>;
+  readonly searchParams: Promise<{ fork_from?: string }>;
 };
 
-export default async function SubmitRunPage({ params }: PageProps) {
+export default async function SubmitRunPage({ params, searchParams }: PageProps) {
   const { hypothesisId } = await params;
+  const { fork_from: forkFrom } = await searchParams;
 
   // Auth check
   const supabase = await createClient();
@@ -57,6 +59,7 @@ export default async function SubmitRunPage({ params }: PageProps) {
         hypothesisId={hypothesisId}
         metricName={hypothesis.metric_name}
         metricDirection={hypothesis.metric_direction}
+        defaultForkedFrom={forkFrom}
       />
     </div>
   );

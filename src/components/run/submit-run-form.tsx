@@ -24,6 +24,7 @@ type SubmitRunFormProps = {
   readonly hypothesisId: string;
   readonly metricName: string;
   readonly metricDirection: string;
+  readonly defaultForkedFrom?: string;
 };
 
 type TsvState = {
@@ -62,6 +63,7 @@ export function SubmitRunForm({
   hypothesisId,
   metricName,
   metricDirection,
+  defaultForkedFrom,
 }: SubmitRunFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -321,6 +323,7 @@ export function SubmitRunForm({
         <Input
           id="forked_from"
           name="forked_from"
+          defaultValue={defaultForkedFrom ?? ""}
           placeholder="Optional UUID of the run you forked from"
         />
         {fieldErrors.forked_from && (
