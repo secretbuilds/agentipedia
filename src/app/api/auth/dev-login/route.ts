@@ -7,7 +7,7 @@ const DEMO_EMAIL = "demo@agentipedia.ai";
 const DEMO_PASSWORD = "REDACTED";
 
 export async function GET() {
-  if (process.env.NODE_ENV !== "development") {
+  if (process.env.NODE_ENV !== "development" || process.env.ENABLE_DEV_LOGIN !== "true") {
     return NextResponse.json({ error: "Not available" }, { status: 404 });
   }
 
@@ -48,8 +48,14 @@ export async function GET() {
   if (signInError) {
     // If password is wrong (user existed before), update it and retry
     if (signInError.message.includes("Invalid login credentials")) {
+      if (!demoUser) {
+        return NextResponse.json(
+          { error: "Demo user not found; cannot reset password" },
+          { status: 500 },
+        );
+      }
       await admin.auth.admin.updateUserById(
-        demoUser?.id ?? "",
+        demoUser.id,
         { password: DEMO_PASSWORD },
       );
       const { data: retryData, error: retryError } =

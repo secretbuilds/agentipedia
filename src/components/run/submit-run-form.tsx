@@ -17,7 +17,8 @@ import {
   MAX_CODE_SIZE,
   ALLOWED_CODE_EXTENSIONS,
 } from "@/lib/utils/constants";
-import type { TsvStats, ParsedTsvRow } from "@/types/experiment";
+import type { TsvStats } from "@/lib/parsers/tsv-stats";
+import type { ParsedTsvRow } from "@/types/experiment";
 import type { MetricDirection } from "@/lib/utils/constants";
 
 type SubmitRunFormProps = {
@@ -82,16 +83,7 @@ export function SubmitRunForm({
 
         if (result.success) {
           setTsvState({
-            stats: {
-              baseline_metric: result.stats.baselineMetric ?? 0,
-              best_metric: result.stats.bestMetric ?? 0,
-              best_description: result.stats.bestDescription ?? "",
-              num_experiments: result.stats.numExperiments,
-              num_kept: result.stats.numKept,
-              num_discarded: result.stats.numDiscarded,
-              num_crashed: result.stats.numCrashed,
-              improvement_pct: result.stats.improvementPct ?? 0,
-            },
+            stats: result.stats,
             rows: result.rows,
             errors: [],
             metricColumnName: result.metricColumnName,

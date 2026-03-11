@@ -12,14 +12,7 @@ import {
   MAX_CODE_SIZE,
   ALLOWED_CODE_EXTENSIONS,
 } from "@/lib/utils/constants";
-
-// ---------------------------------------------------------------------------
-// Response types
-// ---------------------------------------------------------------------------
-
-type ActionSuccess<T = void> = { readonly success: true; readonly data: T };
-type ActionFailure = { readonly success: false; readonly error: string };
-type ActionResult<T = void> = ActionSuccess<T> | ActionFailure;
+import type { ActionResult } from "@/types/action";
 
 // ---------------------------------------------------------------------------
 // Helpers

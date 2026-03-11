@@ -120,7 +120,14 @@ export async function getHypotheses(
       dbQuery = dbQuery.order("run_count", { ascending: false }).order("created_at", { ascending: false });
       break;
     case "best_result":
-      dbQuery = dbQuery.order("best_metric", { ascending: true, nullsFirst: false }).order("created_at", { ascending: false });
+      // Sort descending so the highest metric values appear first.
+      // The hypothesis_feed view aggregates hypotheses with mixed
+      // metric_direction values, so we cannot conditionally flip the
+      // sort per-row at query time. Descending is the better default
+      // because most research metrics are "higher is better" (accuracy,
+      // F1, BLEU, etc.). For "lower_is_better" hypotheses this ordering
+      // is imperfect but still surfaces rows with non-null metrics first.
+      dbQuery = dbQuery.order("best_metric", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false });
       break;
     case "newest":
     default:

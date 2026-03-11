@@ -5,14 +5,7 @@ import { hashToken } from "@/lib/auth/hash-token";
 import { getErrorMessage } from "@/lib/utils/errors";
 import { patLimiter } from "@/lib/utils/rate-limit";
 import type { PersonalAccessToken, PatCreateResponse } from "@/types/pat";
-
-// ---------------------------------------------------------------------------
-// Response types
-// ---------------------------------------------------------------------------
-
-type ActionSuccess<T = void> = { readonly success: true; readonly data: T };
-type ActionFailure = { readonly success: false; readonly error: string };
-type ActionResult<T = void> = ActionSuccess<T> | ActionFailure;
+import type { ActionResult } from "@/types/action";
 
 // ---------------------------------------------------------------------------
 // Helpers

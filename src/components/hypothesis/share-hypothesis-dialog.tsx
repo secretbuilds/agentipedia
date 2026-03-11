@@ -10,7 +10,7 @@ type ShareHypothesisDialogProps = {
   readonly metricName: string;
   readonly metricDirection: string;
   readonly domain: string;
-  readonly hypothesisUrl: string;
+  readonly hypothesisPath: string;
 };
 
 export function ShareHypothesisDialog({
@@ -18,23 +18,23 @@ export function ShareHypothesisDialog({
   metricName,
   metricDirection,
   domain,
-  hypothesisUrl: hypUrl,
+  hypothesisPath,
 }: ShareHypothesisDialogProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  const resolvedUrl =
-    typeof window !== "undefined" && hypUrl.startsWith("http://localhost")
-      ? `${window.location.origin}${new URL(hypUrl).pathname}`
-      : hypUrl;
+  const hypothesisUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}${hypothesisPath}`
+      : hypothesisPath;
 
   const tweetText = composeHypothesisTweet({
     hypothesisTitle,
     metricName,
     metricDirection,
     domain,
-    hypothesisUrl: resolvedUrl,
+    hypothesisUrl,
   });
 
   useEffect(() => {

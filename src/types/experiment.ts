@@ -18,14 +18,3 @@ export type ParsedTsvRow = {
   readonly status: ExperimentStatus;
   readonly description: string;
 };
-
-export type TsvStats = {
-  readonly baseline_metric: number;
-  readonly best_metric: number;
-  readonly best_description: string;
-  readonly num_experiments: number;
-  readonly num_kept: number;
-  readonly num_discarded: number;
-  readonly num_crashed: number;
-  readonly improvement_pct: number;
-};

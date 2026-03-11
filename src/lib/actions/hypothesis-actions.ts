@@ -6,14 +6,7 @@ import { hypothesisSchema } from "@/lib/validators/hypothesis-schema";
 import type { HypothesisFormData } from "@/types/hypothesis";
 import { getErrorMessage } from "@/lib/utils/errors";
 import { mutationLimiter } from "@/lib/utils/rate-limit";
-
-// ---------------------------------------------------------------------------
-// Response types
-// ---------------------------------------------------------------------------
-
-type ActionSuccess<T = void> = { readonly success: true; readonly data: T };
-type ActionFailure = { readonly success: false; readonly error: string };
-type ActionResult<T = void> = ActionSuccess<T> | ActionFailure;
+import type { ActionResult } from "@/types/action";
 
 // ---------------------------------------------------------------------------
 // Actions

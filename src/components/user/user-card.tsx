@@ -28,13 +28,19 @@ export function UserCard({ user, hypothesisCount, runCount }: UserCardProps) {
     <Card>
       <CardContent className="flex flex-col items-center gap-4 pt-2 sm:flex-row sm:items-start">
         {/* Avatar */}
-        <Image
-          src={user.x_avatar_url}
-          alt={user.x_display_name}
-          width={96}
-          height={96}
-          className="size-24 rounded-full"
-        />
+        {user.x_avatar_url ? (
+          <Image
+            src={user.x_avatar_url}
+            alt={user.x_display_name}
+            width={96}
+            height={96}
+            className="size-24 rounded-full"
+          />
+        ) : (
+          <div className="flex size-24 items-center justify-center rounded-full bg-gray-400 text-2xl font-medium text-white">
+            {user.x_display_name.charAt(0).toUpperCase()}
+          </div>
+        )}
 
         {/* Info */}
         <div className="flex flex-1 flex-col items-center gap-2 sm:items-start">

@@ -11,13 +11,13 @@ export default function GlobalError({
 }) {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
-      <h1 className="text-2xl font-bold text-neutral-100">
+      <h1 className="text-2xl font-bold text-gray-900">
         Something went wrong
       </h1>
-      <p className="max-w-md text-sm text-neutral-400">
+      <p className="max-w-md text-sm text-gray-500">
         An unexpected error occurred. Please try again.
         {error.digest && (
-          <span className="mt-1 block text-xs text-neutral-500">
+          <span className="mt-1 block text-xs text-gray-400">
             Error ID: {error.digest}
           </span>
         )}

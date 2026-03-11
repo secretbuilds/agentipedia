@@ -26,13 +26,25 @@ export function UserAvatar({
       href={`/users/${handle}`}
       className="inline-flex items-center gap-2 text-sm text-gray-600 transition-colors hover:text-gray-900"
     >
-      <Image
-        src={avatarUrl}
-        alt={handle}
-        width={px}
-        height={px}
-        className={cn("rounded-full", sizeClass)}
-      />
+      {avatarUrl ? (
+        <Image
+          src={avatarUrl}
+          alt={handle}
+          width={px}
+          height={px}
+          className={cn("rounded-full", sizeClass)}
+        />
+      ) : (
+        <div
+          className={cn(
+            "flex items-center justify-center rounded-full bg-gray-400 text-white font-medium",
+            sizeClass,
+          )}
+          style={{ fontSize: px * 0.45 }}
+        >
+          {handle.charAt(0).toUpperCase()}
+        </div>
+      )}
       <span>@{handle}</span>
     </Link>
   );

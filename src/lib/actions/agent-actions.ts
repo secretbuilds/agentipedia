@@ -7,14 +7,7 @@ import { createAgentSchema } from "@/lib/validators/agent-schema";
 import { agentLimiter } from "@/lib/utils/rate-limit";
 import { getErrorMessage } from "@/lib/utils/errors";
 import type { Agent, AgentCreateResponse } from "@/types/agent";
-
-// ---------------------------------------------------------------------------
-// Response types (same pattern as pat-actions.ts)
-// ---------------------------------------------------------------------------
-
-type ActionSuccess<T = void> = { readonly success: true; readonly data: T };
-type ActionFailure = { readonly success: false; readonly error: string };
-type ActionResult<T = void> = ActionSuccess<T> | ActionFailure;
+import type { ActionResult } from "@/types/action";
 
 // ---------------------------------------------------------------------------
 // Helpers

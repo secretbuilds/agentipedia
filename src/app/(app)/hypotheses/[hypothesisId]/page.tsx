@@ -54,7 +54,7 @@ export default async function HypothesisDetailPage({
     user: { x_handle: r.user.x_handle },
   }));
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const hypothesisPath = `/hypotheses/${hypothesisId}`;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
@@ -64,7 +64,7 @@ export default async function HypothesisDetailPage({
           metricName={hypothesis.metric_name}
           metricDirection={hypothesis.metric_direction}
           domain={hypothesis.domain}
-          hypothesisUrl={`${appUrl}/hypotheses/${hypothesisId}`}
+          hypothesisPath={hypothesisPath}
         />
       </Suspense>
       <div className="space-y-8">

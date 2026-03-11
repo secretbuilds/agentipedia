@@ -10,7 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { TsvStats, ParsedTsvRow } from "@/types/experiment";
+import type { TsvStats } from "@/lib/parsers/tsv-stats";
+import type { ParsedTsvRow } from "@/types/experiment";
 
 type TsvPreviewProps = {
   readonly stats: TsvStats | null;
@@ -19,7 +20,8 @@ type TsvPreviewProps = {
   readonly metricColumnName: string;
 };
 
-function formatPct(value: number): string {
+function formatPct(value: number | null): string {
+  if (value === null) return "—";
   return `${value.toFixed(2)}%`;
 }
 
@@ -69,36 +71,36 @@ export function TsvPreview({
           <div className="rounded-md bg-gray-100 p-3">
             <p className="text-xs text-gray-500">Baseline</p>
             <p className="font-mono text-sm text-gray-900">
-              {stats.baseline_metric.toFixed(4)}
+              {stats.baselineMetric?.toFixed(4) ?? "—"}
             </p>
           </div>
           <div className="rounded-md bg-gray-100 p-3">
             <p className="text-xs text-gray-500">Best</p>
             <p className="font-mono text-sm text-gray-900">
-              {stats.best_metric.toFixed(4)}
+              {stats.bestMetric?.toFixed(4) ?? "—"}
             </p>
           </div>
           <div className="rounded-md bg-gray-100 p-3">
             <p className="text-xs text-gray-500">Improvement</p>
             <p className="font-mono text-sm text-emerald-600">
-              {formatPct(stats.improvement_pct)}
+              {formatPct(stats.improvementPct)}
             </p>
           </div>
           <div className="rounded-md bg-gray-100 p-3">
             <p className="text-xs text-gray-500">Experiments</p>
             <p className="font-mono text-sm text-gray-900">
-              {stats.num_experiments}
+              {stats.numExperiments}
             </p>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-4 text-sm">
           <StatusDot status="keep" />
-          <span className="text-gray-500">{stats.num_kept}</span>
+          <span className="text-gray-500">{stats.numKept}</span>
           <StatusDot status="discard" />
-          <span className="text-gray-500">{stats.num_discarded}</span>
+          <span className="text-gray-500">{stats.numDiscarded}</span>
           <StatusDot status="crash" />
-          <span className="text-gray-500">{stats.num_crashed}</span>
+          <span className="text-gray-500">{stats.numCrashed}</span>
         </div>
       </div>
 

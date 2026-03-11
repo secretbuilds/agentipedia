@@ -7,12 +7,21 @@ const PROTECTED_PREFIXES = [
   "/auth/agents",
 ] as const;
 
+const PROTECTED_PATTERNS = [
+  /^\/hypotheses\/[^/]+\/edit$/,
+  /^\/hypotheses\/[^/]+\/submit-run$/,
+] as const;
+
 export async function middleware(request: NextRequest) {
   const { response, user } = await updateSession(request);
 
-  const isProtected = PROTECTED_PREFIXES.some((prefix) =>
-    request.nextUrl.pathname.startsWith(prefix),
-  );
+  const isProtected =
+    PROTECTED_PREFIXES.some((prefix) =>
+      request.nextUrl.pathname.startsWith(prefix),
+    ) ||
+    PROTECTED_PATTERNS.some((pattern) =>
+      pattern.test(request.nextUrl.pathname),
+    );
 
   if (isProtected && !user) {
     const loginUrl = new URL("/auth/login", request.url);

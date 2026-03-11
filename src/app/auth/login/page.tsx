@@ -2,12 +2,19 @@
 
 import { createClient } from "@/lib/supabase/client";
 
+const ERROR_MESSAGES: Record<string, string> = {
+  "auth_failed": "Authentication failed. Please try again.",
+  "session_expired": "Your session has expired. Please sign in again.",
+  "access_denied": "Access denied. You don't have permission to access this resource.",
+} as const;
+
 export default function LoginPage() {
   const searchParams =
     typeof window !== "undefined"
       ? new URLSearchParams(window.location.search)
       : null;
   const error = searchParams?.get("error");
+  const errorMessage = error ? ERROR_MESSAGES[error] ?? "An error occurred. Please try again." : null;
   const returnTo = searchParams?.get("returnTo");
 
   async function handleSignIn() {
@@ -40,9 +47,9 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {error && (
+        {errorMessage && (
           <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-            {error}
+            {errorMessage}
           </div>
         )}
 
