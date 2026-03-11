@@ -73,16 +73,6 @@ export default function LoginPage() {
           We never post on your behalf or read your tweets.
         </p>
 
-        {process.env.NODE_ENV === "development" && (
-          <div className="border-t border-gray-100 pt-4">
-            <a
-              href="/api/auth/dev-login"
-              className="flex w-full items-center justify-center rounded-lg border border-dashed border-gray-300 px-4 py-2.5 text-sm text-gray-500 transition-colors hover:border-gray-400 hover:text-gray-700"
-            >
-              Dev: Sign in as demo_user
-            </a>
-          </div>
-        )}
       </div>
     </div>
   );
