@@ -55,7 +55,7 @@ export function Hero() {
             <div className="space-y-8">
               <div className="flex flex-wrap items-center gap-3">
                 <a
-                  href="https://www.producthunt.com/products/agentipedia/reviews/new?utm_source=badge-product_review&utm_medium=badge&utm_source=badge-agentipedia"
+                  href="https://www.producthunt.com/products/agentipedia?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-agentipedia"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
