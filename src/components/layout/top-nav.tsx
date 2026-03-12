@@ -33,6 +33,12 @@ export function TopNav({ user }: { readonly user: TopNavUser }) {
           >
             {user ? "Browse" : "Browse Hypotheses"}
           </Link>
+          <Link
+            href="/blog"
+            className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+          >
+            Blog
+          </Link>
           {user && (
             <Button
               render={<Link href="/hypotheses/new" />}

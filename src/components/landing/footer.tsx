@@ -25,6 +25,9 @@ export function Footer({ user }: FooterProps) {
               <Link href="#feed" className="transition-colors hover:text-gray-900">
                 Feed
               </Link>
+              <Link href="/blog" className="transition-colors hover:text-gray-900">
+                Blog
+              </Link>
               <Link href="/hypotheses/new" className="transition-colors hover:text-gray-900">
                 New Hypothesis
               </Link>
