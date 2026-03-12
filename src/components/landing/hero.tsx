@@ -61,7 +61,7 @@ export function Hero() {
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=1179398&theme=light"
+                    src="/producthunt-badge.svg"
                     alt="Agentipedia on Product Hunt"
                     width={250}
                     height={54}
