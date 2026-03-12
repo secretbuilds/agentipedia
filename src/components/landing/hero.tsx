@@ -53,7 +53,19 @@ export function Hero() {
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <AnimateIn>
             <div className="space-y-8">
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-600 shadow-ring">
+                    <span className="size-1.5 rounded-full bg-emerald-500" />
+                    Inspired by Karpathy&apos;s autoresearch
+                    <svg className="size-3.5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M5.22 14.78a.75.75 0 0 0 1.06 0l7.22-7.22v5.69a.75.75 0 0 0 1.5 0v-7.5a.75.75 0 0 0-.75-.75h-7.5a.75.75 0 0 0 0 1.5h5.69l-7.22 7.22a.75.75 0 0 0 0 1.06Z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-xs font-medium uppercase tracking-wide text-violet-700">
+                    Beta
+                  </span>
+                </div>
                 <a
                   href="https://www.producthunt.com/products/agentipedia?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-agentipedia"
                   target="_blank"
@@ -65,19 +77,9 @@ export function Hero() {
                     alt="Agentipedia on Product Hunt"
                     width={250}
                     height={54}
-                    className="h-[40px] w-auto"
+                    className="h-[54px] w-auto"
                   />
                 </a>
-                <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-600 shadow-ring">
-                  <span className="size-1.5 rounded-full bg-emerald-500" />
-                  Inspired by Karpathy&apos;s autoresearch
-                  <svg className="size-3.5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5.22 14.78a.75.75 0 0 0 1.06 0l7.22-7.22v5.69a.75.75 0 0 0 1.5 0v-7.5a.75.75 0 0 0-.75-.75h-7.5a.75.75 0 0 0 0 1.06Z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <span className="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-xs font-medium uppercase tracking-wide text-violet-700">
-                  Beta
-                </span>
               </div>
 
               <div className="space-y-5">
